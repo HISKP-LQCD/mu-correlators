@@ -63,18 +63,18 @@ def cosh_fit_decorator(n):
 
     :rtype: function
     '''
-    def cosh_fit(x, t1, t2, a1, a2, offset):
+    def cosh_fit(x, m1, m2, a1, a2, offset):
         '''
         :param np.array x: Input values
-        :param float t1: Decay time for falling exponential
-        :param float t2: Decay time for rising exponential
+        :param float m1: Effective mass for falling exponential
+        :param float m2: Effective mass for rising exponential
         :param float a1: Amplitude for falling exponential
         :param float a2: Amplitude for rising exponential
         :param float offset: Constant offset
         '''
         y = n - x
-        first = a1 * np.exp(-x/t1)
-        second = a2 * np.exp(-y/t2)
+        first = a1 * np.exp(-x*m1)
+        second = a2 * np.exp(-y*m2)
         return first + second + offset
 
     return cosh_fit
@@ -93,7 +93,7 @@ def main():
         time = np.array(range(len(data)))
 
         fit_func = cosh_fit_decorator(len(data))
-        popt, pconv = op.curve_fit(fit_func, time, real, p0=[10, 10, 400, 300/np.exp(5), 10])
+        popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 10])
         print(popt)
         print(np.sqrt(pconv.diagonal()))
 
