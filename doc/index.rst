@@ -9,7 +9,10 @@ Welcome to MU Correlators's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+    :glob:
+
+    */index
 
 
 
