@@ -58,8 +58,15 @@ def effective_mass(data, delta_t=1):
     return m
 
 def cosh_fit_decorator(n):
-    '''
+    r'''
     Generates a cosh fit function for given data length
+
+    The generated function will be the following with :math:`n` baked in:
+
+    .. math::
+
+        \operatorname{fit}(x; m_1, m_2, a_1, a_2, \mathrm{offset})
+        = a_1 \exp(- m_1 x) + a_2 \exp(- m_2 [n - x]) + \mathrm{offset}
 
     :rtype: function
     '''
