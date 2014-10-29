@@ -4,6 +4,6 @@
 main
 ####
 
-.. automodule:: future
+.. automodule:: main
     :members:
     :undoc-members:
