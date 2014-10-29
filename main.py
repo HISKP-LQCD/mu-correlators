@@ -107,9 +107,6 @@ def main():
         x = np.linspace(np.min(time), np.max(time), 1000)
         y = fit_func(x, *popt)
 
-
-
-
         pl.plot(real, linestyle='none', marker='o', label='complete')
         pl.plot(folded, linestyle='none', marker='o', label='folded')
         pl.title('Correlators')
