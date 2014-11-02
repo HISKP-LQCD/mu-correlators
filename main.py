@@ -18,6 +18,31 @@ import scipy.optimize as op
 # This package.
 import loader
 
+def fit_and_plot(func, x, y, axes, omit_pre=0, omit_post=0, p0=None,
+                 fit_param={}, data_param={}, used_param={}):
+
+    used_x = x[omit_pre:-omit_post-1]
+    used_y = y[omit_pre:-omit_post-1]
+    popt, pconv = op.curve_fit(func, used_x, used_y, p0=p0)
+    error = np.sqrt(pconv.diagonal())
+
+    fx = np.linspace(np.min(x), np.max(x), 1000)
+    fy = func(fx, *popt)
+
+    param = {'marker': '+', 'linestyle': 'none'}
+    param = dict(param.items() + data_param.items())
+    axes.plot(x, y, **param)
+
+    param = {'marker': '+', 'linestyle': 'none'}
+    param = dict(param.items() + used_param.items())
+    axes.plot(used_x, used_y, **param)
+
+    param = {}
+    param = dict(param.items() + fit_param.items())
+    axes.plot(fx, fy, **param)
+
+    return list(zip(popt, error))
+
 def fold_data(data):
     r'''
     Folds the data around the middle element and averages.
@@ -103,7 +128,7 @@ def main():
     data = loader.average_loader(options.filename)
     print(data)
 
-    plot_correlator(data[10:-10])
+    plot_correlator(data)
     #plot_effective_mass(data)
 
 def plot_correlator(data):
@@ -120,26 +145,21 @@ def plot_correlator(data):
     ax.plot(real, linestyle='none', marker='+', label='complete')
     ax2.plot(folded, linestyle='none', marker='+', label='folded')
 
-    fit_func = cosh_fit
-    popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.2, 400, 30, 0])
-    print('Fit parameters cosh')
-    print(popt)
-    print(pconv)
-    print(np.sqrt(pconv.diagonal()))
-    x = np.linspace(np.min(time), np.max(time), 1000)
-    y = fit_func(x, *popt)
-    ax.plot(x, y, label='cosh fit')
+    fit_param = {'color': 'gray'}
+    used_param = {'color': 'orange'}
+    data_param = {'color': 'black'}
 
-    fit_func = exp_fit
-    popt, pconv = op.curve_fit(fit_func, time_folded, folded)
-    print('Fit parameters exp')
-    print(popt)
-    print(pconv)
-    print(np.sqrt(pconv.diagonal()))
-    x = np.linspace(np.min(time_folded), np.max(time_folded), 1000)
-    y = fit_func(x, *popt)
-    ax2.plot(x, y, label='exp fit')
+    p = fit_and_plot(cosh_fit, time, real, ax, omit_pre=10, omit_post=10,
+                     p0=[0.2, 400, 30, 0], fit_param=fit_param,
+                     used_param=used_param, data_param=data_param)
+    print('Fit parameters cosh:')
+    print(p)
 
+    p = fit_and_plot(exp_fit, time_folded, folded, ax2, omit_pre=5,
+                     omit_post=3, fit_param=fit_param, used_param=used_param,
+                     data_param=data_param)
+    print('Fit parameters exp:')
+    print(p)
 
     ax.set_yscale('log')
     ax.margins(0.1, tight=False)
