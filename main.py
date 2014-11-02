@@ -112,7 +112,7 @@ def main():
     data = loader.average_loader(options.filename)
     print(data)
 
-    plot_correlator(data)
+    plot_correlator(data[10:-10])
     plot_effective_mass(data)
 
 def plot_correlator(data):
@@ -126,7 +126,8 @@ def plot_correlator(data):
     ax = fig.add_subplot(1, 1, 1)
 
     fit_func = cosh_fit_decorator(len(data))
-    popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 10])
+    popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 0])
+    print('Fit parameters cosh')
     print(popt)
     print(pconv)
     print(np.sqrt(pconv.diagonal()))
@@ -135,7 +136,8 @@ def plot_correlator(data):
     ax.plot(x, y, label='cosh fit')
 
     fit_func = exp_fit
-    popt, pconv = op.curve_fit(fit_func, time_folded, folded, p0=[0.2, 450, 0])
+    popt, pconv = op.curve_fit(fit_func, time_folded, folded)
+    print('Fit parameters exp')
     print(popt)
     print(pconv)
     print(np.sqrt(pconv.diagonal()))
