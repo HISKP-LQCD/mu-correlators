@@ -92,7 +92,6 @@ def effective_mass_cosh(data, delta_t=1):
 
     return np.arccosh(frac)
 
-
 def cosh_fit(x, m, a, shift, offset):
     '''
 
@@ -206,7 +205,6 @@ def plot_effective_mass(data):
 
     fig.tight_layout()
     fig.savefig('m_eff.pdf')
-
 
 def _parse_args():
     '''
