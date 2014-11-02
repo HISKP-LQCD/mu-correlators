@@ -147,9 +147,9 @@ def plot_correlator(data):
     ax.plot(folded, linestyle='none', marker='+', label='folded')
 
     ax.set_yscale('log')
-    ax.set_title('Correlators')
-    ax.set_xlabel(r'$i$')
-    ax.set_ylabel(r'$C(t_i)$')
+    ax.set_title('Correlator')
+    ax.set_xlabel(r'$t/a$')
+    ax.set_ylabel(r'$C(t)$')
     ax.legend(loc='best')
     ax.grid(True)
     fig.savefig('folded.pdf')
