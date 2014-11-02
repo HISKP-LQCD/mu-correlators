@@ -117,6 +117,9 @@ def plot_correlator(data):
     ax = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
 
+    ax.plot(real, linestyle='none', marker='+', label='complete')
+    ax2.plot(folded, linestyle='none', marker='+', label='folded')
+
     fit_func = cosh_fit
     popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.2, 400, 30, 0])
     print('Fit parameters cosh')
@@ -137,8 +140,6 @@ def plot_correlator(data):
     y = fit_func(x, *popt)
     ax2.plot(x, y, label='exp fit')
 
-    ax.plot(real, linestyle='none', marker='+', label='complete')
-    ax2.plot(folded, linestyle='none', marker='+', label='folded')
 
     ax.set_yscale('log')
     ax.margins(0.1, tight=False)
