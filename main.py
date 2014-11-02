@@ -104,7 +104,7 @@ def main():
     print(data)
 
     plot_correlator(data[10:-10])
-    plot_effective_mass(data)
+    #plot_effective_mass(data)
 
 def plot_correlator(data):
     real = np.real(data)
@@ -141,6 +141,7 @@ def plot_correlator(data):
     ax2.plot(folded, linestyle='none', marker='+', label='folded')
 
     ax.set_yscale('log')
+    ax.margins(0.1, tight=False)
     ax.set_title('Correlator')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$C(t)$')
@@ -148,12 +149,14 @@ def plot_correlator(data):
     ax.grid(True)
 
     ax2.set_yscale('log')
+    ax2.margins(0.1, tight=False)
     ax2.set_title('Folded Correlator')
     ax2.set_xlabel(r'$t/a$')
-    ax2.set_ylabel(r'$C(t)$')
+    ax2.set_ylabel(r'$\frac{1}{2} [C(t) + C(T-t)]$')
     #ax2.legend(loc='best')
     ax2.grid(True)
 
+    fig.tight_layout()
     fig.savefig('folded.pdf')
 
 def plot_effective_mass(data):
