@@ -27,9 +27,7 @@ def correlator_loader(filename):
     :returns: NumPy array with complex numbers
     :rtype: np.array
     '''
-    #dtype = np.dtype([('real', '<f8'), ('imag', '<f8')])
     dtype = np.dtype(np.complex128)
-    #dtype = np.dtype('<c16')
     data = np.fromfile(filename, dtype)
 
     return data
@@ -42,7 +40,6 @@ def loader_iterator(filenames):
     '''
     for filename in filenames:
         data = correlator_loader(filename)
-        print(filename)
         yield data
 
 def average_loader(filenames):
