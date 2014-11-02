@@ -29,6 +29,10 @@ def fit_and_plot(func, x, y, axes, omit_pre=0, omit_post=0, p0=None,
     fx = np.linspace(np.min(x), np.max(x), 1000)
     fy = func(fx, *popt)
 
+    param = {}
+    param = dict(param.items() + fit_param.items())
+    axes.plot(fx, fy, **param)
+
     param = {'marker': '+', 'linestyle': 'none'}
     param = dict(param.items() + data_param.items())
     axes.plot(x, y, **param)
@@ -36,10 +40,6 @@ def fit_and_plot(func, x, y, axes, omit_pre=0, omit_post=0, p0=None,
     param = {'marker': '+', 'linestyle': 'none'}
     param = dict(param.items() + used_param.items())
     axes.plot(used_x, used_y, **param)
-
-    param = {}
-    param = dict(param.items() + fit_param.items())
-    axes.plot(fx, fy, **param)
 
     return list(zip(popt, error))
 
@@ -128,7 +128,7 @@ def main():
     data = loader.average_loader(options.filename)
 
     plot_correlator(data)
-    #plot_effective_mass(data)
+    plot_effective_mass(data)
 
 def plot_correlator(data):
     real = np.real(data)
@@ -138,30 +138,28 @@ def plot_correlator(data):
     time_folded = np.array(range(len(folded)))
 
     fig = pl.figure()
-    ax = fig.add_subplot(2, 1, 1)
-    ax2 = fig.add_subplot(2, 1, 2)
+    ax = fig.add_subplot(1, 2, 1)
+    ax2 = fig.add_subplot(1, 2, 2)
 
     ax.plot(real, linestyle='none', marker='+', label='complete')
     ax2.plot(folded, linestyle='none', marker='+', label='folded')
 
     fit_param = {'color': 'gray'}
-    used_param = {'color': 'orange'}
+    used_param = {'color': 'blue'}
     data_param = {'color': 'black'}
 
-    p = fit_and_plot(cosh_fit, time, real, ax, omit_pre=10, omit_post=10,
+    p = fit_and_plot(cosh_fit, time, real, ax, omit_pre=9, omit_post=9,
                      p0=[0.2, 400, 30, 0], fit_param=fit_param,
                      used_param=used_param, data_param=data_param)
-    print('Fit parameters cosh:')
-    print(p[0])
+    print('Fit parameters cosh:', p[0])
 
     p = fit_and_plot(exp_fit, time_folded, folded, ax2, omit_pre=5,
                      omit_post=3, fit_param=fit_param, used_param=used_param,
                      data_param=data_param)
-    print('Fit parameters exp:')
-    print(p[0])
+    print('Fit parameters exp:', p[0])
 
     ax.set_yscale('log')
-    ax.margins(0.1, tight=False)
+    ax.margins(0.05, tight=False)
     ax.set_title('Correlator')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$C(t)$')
@@ -169,36 +167,45 @@ def plot_correlator(data):
     ax.grid(True)
 
     ax2.set_yscale('log')
-    ax2.margins(0.1, tight=False)
+    ax2.margins(0.05, tight=False)
     ax2.set_title('Folded Correlator')
     ax2.set_xlabel(r'$t/a$')
     ax2.set_ylabel(r'$\frac{1}{2} [C(t) + C(T-t)]$')
     #ax2.legend(loc='best')
     ax2.grid(True)
+    ax2.yaxis.tick_right()
+    ax2.yaxis.set_label_position('right')
 
     fig.tight_layout()
     fig.savefig('folded.pdf')
 
 def plot_effective_mass(data):
     real = np.real(data)
-    folded = fold_data(real)
-    m_eff = effective_mass_cosh(folded)
+    time = np.array(range(len(real)))
+    m_eff = effective_mass_cosh(real)
+    time_cut = time[1:-1]
 
-    time = np.array(range(len(data)))
-    time_folded = np.array(range(len(folded)))
+    fig = pl.figure()
+    ax = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2)
 
+    ax.plot(time_cut, m_eff, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
+    ax.set_title(r'Effective Mass $\operatorname{arcosh} ([C(t-1)+C(t+1)]/[2C(t)])$')
+    ax.set_xlabel(r'$t/a$')
+    ax.set_ylabel(r'$m_\mathrm{eff}(t)$')
+    #ax.legend(loc='best')
+    ax.grid(True)
+    ax.margins(0.05, 0.05)
 
-    pl.clf()
-    pl.plot(m_eff, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ folded')
-    #pl.plot(effective_mass_cosh(real), linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
-    pl.title('Effective Mass')
-    pl.xlabel(r'$i$')
-    pl.ylabel(r'$m_\mathrm{eff}(t_i)$')
-    pl.legend(loc='best')
-    pl.grid(True)
-    pl.savefig('m_eff.pdf')
-    #pl.show()
-    pl.clf()
+    ax2.plot(time_cut[8:-8], m_eff[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
+    ax2.errorbar([22.5], [0.22293], [0.00035], marker='+')
+    ax2.set_xlabel(r'$t/a$')
+    ax2.set_ylabel(r'$m_\mathrm{eff}(t)$')
+    ax2.grid(True)
+    ax2.margins(0.05, 0.05)
+
+    fig.tight_layout()
+    fig.savefig('m_eff.pdf')
 
 
 def _parse_args():
