@@ -33,3 +33,18 @@ def correlator_loader(filename):
     data = np.fromfile(filename, dtype)
 
     return data
+
+def loader_iterator(filenames):
+    '''
+    Iterator that gives the data to the given filenames.
+
+    :param list filenames: List of filenames (str)
+    '''
+    for filename in filenames:
+        data = correlator_loader(filename)
+        print(filename)
+        yield data
+
+def average_loader(filenames):
+    add = lambda x, y: x + y
+    return reduce(add, loader_iterator(filenames)) / len(filenames)

@@ -57,6 +57,17 @@ def effective_mass(data, delta_t=1):
     m = - np.log(data[delta_t:] / data[:-delta_t]) / delta_t
     return m
 
+def effective_mass_cosh(data, delta_t=1):
+    r'''
+    .. math::
+
+        \operatorname{arcosh} \left(\frac{C(t-1)+C(t+1)}{2C(t)}\right)
+    '''
+    frac = (data[:-2*delta_t] + data[2*delta_t:]) / data[delta_t:-delta_t] / 2
+
+    return np.arccosh(frac)
+
+
 def cosh_fit_decorator(n):
     r'''
     Generates a cosh fit function for given data length
@@ -86,47 +97,66 @@ def cosh_fit_decorator(n):
 
     return cosh_fit
 
+def exp_fit(x, m1, a1, offset):
+    '''
+    :param np.array x: Input values
+    :param float m1: Effective mass for falling exponential
+    :param float a1: Amplitude for falling exponential
+    :param float offset: Constant offset
+    '''
+    return a1 * np.exp(-x*m1) + offset
+
 def main():
     options = _parse_args()
 
-    for filename in options.filename:
-        data = loader.correlator_loader(filename)
-        print(data)
+    data = loader.average_loader(options.filename)
+    print(data)
 
-        real = np.real(data)
-        folded = fold_data(real)
-        m_eff = effective_mass(folded)
+    real = np.real(data)
+    folded = fold_data(real)
+    m_eff = effective_mass_cosh(folded)
 
-        time = np.array(range(len(data)))
+    time = np.array(range(len(data)))
+    time_folded = np.array(range(len(folded)))
 
-        fit_func = cosh_fit_decorator(len(data))
-        popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 10])
-        print(popt)
-        print(np.sqrt(pconv.diagonal()))
+    fit_func = cosh_fit_decorator(len(data))
+    popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 10])
+    print(popt)
+    print(pconv)
+    print(np.sqrt(pconv.diagonal()))
+    x = np.linspace(np.min(time), np.max(time), 1000)
+    y = fit_func(x, *popt)
+    pl.plot(x, y, label='cosh fit')
 
-        x = np.linspace(np.min(time), np.max(time), 1000)
-        y = fit_func(x, *popt)
+    fit_func = exp_fit
+    popt, pconv = op.curve_fit(fit_func, time_folded, folded, p0=[0.2, 450, 0])
+    print(popt)
+    print(pconv)
+    print(np.sqrt(pconv.diagonal()))
+    x = np.linspace(np.min(time_folded), np.max(time_folded), 1000)
+    y = fit_func(x, *popt)
+    pl.plot(x, y, label='exp fit')
 
-        pl.plot(real, linestyle='none', marker='o', label='complete')
-        pl.plot(folded, linestyle='none', marker='o', label='folded')
-        pl.title('Correlators')
-        pl.xlabel(r'$i$')
-        pl.ylabel(r'$C(t_i)$')
-        pl.plot(x, y, label='cosh fit')
-        pl.legend(loc='best')
-        pl.grid(True)
-        pl.savefig('folded.pdf')
-        pl.clf()
+    pl.plot(real, linestyle='none', marker='+', label='complete')
+    pl.plot(folded, linestyle='none', marker='+', label='folded')
+    pl.title('Correlators')
+    pl.xlabel(r'$i$')
+    pl.ylabel(r'$C(t_i)$')
+    pl.legend(loc='best')
+    pl.grid(True)
+    pl.savefig('folded.pdf')
+    pl.clf()
 
-        pl.plot(m_eff, label=r'$m_{\mathrm{eff}}$ folded')
-        pl.plot(effective_mass(real), label=r'$m_{\mathrm{eff}}$ complete')
-        pl.title('Effective Mass')
-        pl.xlabel(r'$i$')
-        pl.ylabel(r'$m_\mathrm{eff}(t_i)$')
-        pl.legend(loc='best')
-        pl.grid(True)
-        pl.savefig('m_eff.pdf')
-        pl.clf()
+    pl.plot(m_eff, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ folded')
+    #pl.plot(effective_mass_cosh(real), linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
+    pl.title('Effective Mass')
+    pl.xlabel(r'$i$')
+    pl.ylabel(r'$m_\mathrm{eff}(t_i)$')
+    pl.legend(loc='best')
+    pl.grid(True)
+    pl.savefig('m_eff.pdf')
+    #pl.show()
+    pl.clf()
 
 
 def _parse_args():
