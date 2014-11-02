@@ -126,7 +126,6 @@ def main():
     options = _parse_args()
 
     data = loader.average_loader(options.filename)
-    print(data)
 
     plot_correlator(data)
     #plot_effective_mass(data)
@@ -153,13 +152,13 @@ def plot_correlator(data):
                      p0=[0.2, 400, 30, 0], fit_param=fit_param,
                      used_param=used_param, data_param=data_param)
     print('Fit parameters cosh:')
-    print(p)
+    print(p[0])
 
     p = fit_and_plot(exp_fit, time_folded, folded, ax2, omit_pre=5,
                      omit_post=3, fit_param=fit_param, used_param=used_param,
                      data_param=data_param)
     print('Fit parameters exp:')
-    print(p)
+    print(p[0])
 
     ax.set_yscale('log')
     ax.margins(0.1, tight=False)
