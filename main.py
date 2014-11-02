@@ -68,34 +68,25 @@ def effective_mass_cosh(data, delta_t=1):
     return np.arccosh(frac)
 
 
-def cosh_fit_decorator(n):
-    r'''
-    Generates a cosh fit function for given data length
-
-    The generated function will be the following with :math:`n` baked in:
+def cosh_fit(x, m, a, shift, offset):
+    '''
 
     .. math::
 
         \operatorname{fit}(x; m_1, m_2, a_1, a_2, \mathrm{offset})
         = a_1 \exp(- m_1 x) + a_2 \exp(- m_2 [n - x]) + \mathrm{offset}
 
-    :rtype: function
+    :param np.array x: Input values
+    :param float m1: Effective mass for falling exponential
+    :param float m2: Effective mass for rising exponential
+    :param float a1: Amplitude for falling exponential
+    :param float a2: Amplitude for rising exponential
+    :param float offset: Constant offset
     '''
-    def cosh_fit(x, m1, m2, a1, a2, offset):
-        '''
-        :param np.array x: Input values
-        :param float m1: Effective mass for falling exponential
-        :param float m2: Effective mass for rising exponential
-        :param float a1: Amplitude for falling exponential
-        :param float a2: Amplitude for rising exponential
-        :param float offset: Constant offset
-        '''
-        y = n - x
-        first = a1 * np.exp(-x*m1)
-        second = a2 * np.exp(-y*m2)
-        return first + second + offset
-
-    return cosh_fit
+    y = shift - x
+    first = a * np.exp(-x*m)
+    second = a * np.exp(-y*m)
+    return first + second + offset
 
 def exp_fit(x, m1, a1, offset):
     '''
@@ -126,8 +117,8 @@ def plot_correlator(data):
     ax = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
 
-    fit_func = cosh_fit_decorator(len(data))
-    popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 0])
+    fit_func = cosh_fit
+    popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.2, 400, 30, 0])
     print('Fit parameters cosh')
     print(popt)
     print(pconv)
