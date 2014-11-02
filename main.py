@@ -112,12 +112,17 @@ def main():
     data = loader.average_loader(options.filename)
     print(data)
 
+    plot_correlator(data)
+    plot_effective_mass(data)
+
+def plot_correlator(data):
     real = np.real(data)
     folded = fold_data(real)
-    m_eff = effective_mass_cosh(folded)
 
     time = np.array(range(len(data)))
     time_folded = np.array(range(len(folded)))
+
+    pl.figure()
 
     fit_func = cosh_fit_decorator(len(data))
     popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 10])
@@ -146,6 +151,15 @@ def main():
     pl.grid(True)
     pl.savefig('folded.pdf')
     pl.clf()
+
+def plot_effective_mass(data):
+    real = np.real(data)
+    folded = fold_data(real)
+    m_eff = effective_mass_cosh(folded)
+
+    time = np.array(range(len(data)))
+    time_folded = np.array(range(len(folded)))
+
 
     pl.plot(m_eff, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ folded')
     #pl.plot(effective_mass_cosh(real), linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
