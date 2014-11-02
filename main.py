@@ -123,7 +123,8 @@ def plot_correlator(data):
     time_folded = np.array(range(len(folded)))
 
     fig = pl.figure()
-    ax = fig.add_subplot(1, 1, 1)
+    ax = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2)
 
     fit_func = cosh_fit_decorator(len(data))
     popt, pconv = op.curve_fit(fit_func, time, real, p0=[0.1, 0.1, 400, 300/np.exp(5), 0])
@@ -143,17 +144,25 @@ def plot_correlator(data):
     print(np.sqrt(pconv.diagonal()))
     x = np.linspace(np.min(time_folded), np.max(time_folded), 1000)
     y = fit_func(x, *popt)
-    ax.plot(x, y, label='exp fit')
+    ax2.plot(x, y, label='exp fit')
 
     ax.plot(real, linestyle='none', marker='+', label='complete')
-    ax.plot(folded, linestyle='none', marker='+', label='folded')
+    ax2.plot(folded, linestyle='none', marker='+', label='folded')
 
     ax.set_yscale('log')
     ax.set_title('Correlator')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$C(t)$')
-    ax.legend(loc='best')
+    #ax.legend(loc='best')
     ax.grid(True)
+
+    ax2.set_yscale('log')
+    ax2.set_title('Folded Correlator')
+    ax2.set_xlabel(r'$t/a$')
+    ax2.set_ylabel(r'$C(t)$')
+    #ax2.legend(loc='best')
+    ax2.grid(True)
+
     fig.savefig('folded.pdf')
 
 def plot_effective_mass(data):
