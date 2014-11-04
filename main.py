@@ -53,16 +53,18 @@ def fold_data(data):
 
     .. math::
 
-        y_i := \frac{x_i + x_{N-i+1}}2
+        y_i := \frac{x_i + x_{N-i}}2
 
     :param np.array data: Array with an even number of elements
     :returns: Folded array with :math:`N/2` elements
     :rtype: np.array
     '''
     n = len(data)
-    first = data[:n//2]
-    second = data[n//2:]
-    return (first + second[::-1]) / 2
+    second_rev = data[n//2+1:][::-1]
+    first = data[:n//2+1]
+    first[1:-1] += second_rev
+    first[1:-1] /= 2.
+    return first
 
 def effective_mass(data, delta_t=1):
     r'''
@@ -153,7 +155,7 @@ def plot_correlator(data):
     print('Fit parameters cosh:', p[0])
 
     p = fit_and_plot(exp_fit, time_folded, folded, ax2, omit_pre=5,
-                     omit_post=3, fit_param=fit_param, used_param=used_param,
+                     fit_param=fit_param, used_param=used_param,
                      data_param=data_param)
     print('Fit parameters exp:', p[0])
 
