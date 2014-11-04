@@ -21,8 +21,14 @@ import loader
 def fit_and_plot(func, x, y, axes, omit_pre=0, omit_post=0, p0=None,
                  fit_param={}, data_param={}, used_param={}):
 
-    used_x = x[omit_pre:-omit_post-1]
-    used_y = y[omit_pre:-omit_post-1]
+    if omit_post == 0:
+        used_x = x[omit_pre:]
+        used_y = y[omit_pre:]
+    else:
+        end = - omit_post - 1
+        used_x = x[omit_pre:end]
+        used_y = y[omit_pre:end]
+
     popt, pconv = op.curve_fit(func, used_x, used_y, p0=p0)
     error = np.sqrt(pconv.diagonal())
 
@@ -149,12 +155,12 @@ def plot_correlator(data):
     used_param = {'color': 'blue'}
     data_param = {'color': 'black'}
 
-    p = fit_and_plot(cosh_fit, time, real, ax, omit_pre=9, omit_post=9,
+    p = fit_and_plot(cosh_fit, time, real, ax, omit_pre=13, omit_post=12,
                      p0=[0.2, 400, 30, 0], fit_param=fit_param,
                      used_param=used_param, data_param=data_param)
     print('Fit parameters cosh:', p[0])
 
-    p = fit_and_plot(exp_fit, time_folded, folded, ax2, omit_pre=5,
+    p = fit_and_plot(exp_fit, time_folded, folded, ax2, omit_pre=13,
                      fit_param=fit_param, used_param=used_param,
                      data_param=data_param)
     print('Fit parameters exp:', p[0])
