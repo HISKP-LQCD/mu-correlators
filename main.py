@@ -114,9 +114,6 @@ def effective_mass_cosh(val, err, dt=1):
         + ((val[:-2*dt] + val[2*dt:]) / val[dt:-dt]**2 / 2 * err[dt:-dt])**2
     )
 
-    print(frac_val)
-    print(frac_err)
-
     m_eff_val = np.arccosh(frac_val)
     m_eff_err = 1 / np.sqrt(frac_val**2 - 1) * frac_err
 
