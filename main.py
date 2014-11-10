@@ -101,15 +101,26 @@ def effective_mass(data, delta_t=1):
     m = - np.log(data[delta_t:] / data[:-delta_t]) / delta_t
     return m
 
-def effective_mass_cosh(data, delta_t=1):
+def effective_mass_cosh(val, err, dt=1):
     r'''
     .. math::
 
         \operatorname{arcosh} \left(\frac{C(t-1)+C(t+1)}{2C(t)}\right)
     '''
-    frac = (data[:-2*delta_t] + data[2*delta_t:]) / data[delta_t:-delta_t] / 2
+    frac_val = (val[:-2*dt] + val[2*dt:]) / val[dt:-dt] / 2
+    frac_err = np.sqrt(
+        (val[2*dt:] / val[dt:-dt] / 2 * err[:-2*dt])**2
+        + (val[:-2*dt] / val[dt:-dt] / 2 * err[2*dt:])**2
+        + ((val[:-2*dt] + val[2*dt:]) / val[dt:-dt]**2 / 2 * err[dt:-dt])**2
+    )
 
-    return np.arccosh(frac)
+    print(frac_val)
+    print(frac_err)
+
+    m_eff_val = np.arccosh(frac_val)
+    m_eff_err = 1 / np.sqrt(frac_val**2 - 1) * frac_err
+
+    return m_eff_val, m_eff_err
 
 def cosh_fit(x, m, a, shift, offset):
     '''
@@ -146,7 +157,7 @@ def main():
     val, err = loader.average_loader(options.filename)
 
     plot_correlator(val, err)
-    #plot_effective_mass(val, err)
+    plot_effective_mass(val, err)
 
 def plot_correlator(val, err):
     real_val = np.real(val)
@@ -200,16 +211,15 @@ def plot_correlator(val, err):
     fig.savefig('folded.pdf')
 
 def plot_effective_mass(val, err):
-    real = np.real(val)
-    time = np.array(range(len(real)))
-    m_eff = effective_mass_cosh(real)
+    time = np.arange(len(val))
+    m_eff_val, m_eff_err = effective_mass_cosh(val, err)
     time_cut = time[1:-1]
 
     fig = pl.figure()
     ax = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
 
-    ax.plot(time_cut, m_eff, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
+    ax.errorbar(time_cut, m_eff_val, yerr=m_eff_err, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
     ax.set_title(r'Effective Mass $\operatorname{arcosh} ([C(t-1)+C(t+1)]/[2C(t)])$')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$m_\mathrm{eff}(t)$')
@@ -217,7 +227,7 @@ def plot_effective_mass(val, err):
     ax.grid(True)
     ax.margins(0.05, 0.05)
 
-    ax2.plot(time_cut[8:-8], m_eff[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
+    ax2.errorbar(time_cut[8:-8], m_eff_val[8:-8], yerr=m_eff_err[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
     ax2.errorbar([22.5], [0.22293], [0.00035], marker='+')
     ax2.set_xlabel(r'$t/a$')
     ax2.set_ylabel(r'$m_\mathrm{eff}(t)$')
