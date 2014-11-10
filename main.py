@@ -14,6 +14,7 @@ import argparse
 import matplotlib.pyplot as pl
 import numpy as np
 import scipy.optimize as op
+import scipy.stats
 
 # This package.
 import loader
@@ -51,6 +52,13 @@ def fit_and_plot(func, x, y, yerr, axes, omit_pre=0, omit_post=0, p0=None,
     param = {'marker': '+', 'linestyle': 'none'}
     param = dict(param.items() + used_param.items())
     axes.errorbar(used_x, used_y, yerr=used_yerr, **param)
+
+    dof = len(used_y) - len(popt) - 1
+    chisq, p = scipy.stats.chisquare(used_y, func(used_y, *popt), ddof=len(popt))
+
+    print('χ2:', chisq)
+    print('χ2/DOF:', chisq/dof)
+    print('p:', p)
 
     return list(zip(popt, error))
 
