@@ -18,19 +18,24 @@ import scipy.optimize as op
 # This package.
 import loader
 
-def fit_and_plot(func, x, y, axes, omit_pre=0, omit_post=0, p0=None,
+def fit_and_plot(func, x, y, yerr, axes, omit_pre=0, omit_post=0, p0=None,
                  fit_param={}, data_param={}, used_param={}):
 
     if omit_post == 0:
         used_x = x[omit_pre:]
         used_y = y[omit_pre:]
+        used_yerr = yerr[omit_pre:]
     else:
         end = - omit_post - 1
         used_x = x[omit_pre:end]
         used_y = y[omit_pre:end]
+        used_yerr = yerr[omit_pre:end]
 
-    popt, pconv = op.curve_fit(func, used_x, used_y, p0=p0)
-    error = np.sqrt(pconv.diagonal())
+    popt, pconv = op.curve_fit(func, used_x, used_y, p0=p0, sigma=used_yerr)
+    try:
+        error = np.sqrt(pconv.diagonal())
+    except AttributeError:
+        error = np.nan * np.ones(popt.shape)
 
     fx = np.linspace(np.min(x), np.max(x), 1000)
     fy = func(fx, *popt)
@@ -41,15 +46,15 @@ def fit_and_plot(func, x, y, axes, omit_pre=0, omit_post=0, p0=None,
 
     param = {'marker': '+', 'linestyle': 'none'}
     param = dict(param.items() + data_param.items())
-    axes.plot(x, y, **param)
+    axes.errorbar(x, y, yerr=yerr, **param)
 
     param = {'marker': '+', 'linestyle': 'none'}
     param = dict(param.items() + used_param.items())
-    axes.plot(used_x, used_y, **param)
+    axes.errorbar(used_x, used_y, yerr=used_yerr, **param)
 
     return list(zip(popt, error))
 
-def fold_data(data):
+def fold_data(val, err):
     r'''
     Folds the data around the middle element and averages.
 
@@ -61,16 +66,22 @@ def fold_data(data):
 
         y_i := \frac{x_i + x_{N-i}}2
 
-    :param np.array data: Array with an even number of elements
+    :param np.array val: Array with an even number of elements, values
+    :param np.array err: Array with an even number of elements, errors
     :returns: Folded array with :math:`N/2` elements
     :rtype: np.array
     '''
-    n = len(data)
-    second_rev = data[n//2+1:][::-1]
-    first = data[:n//2+1]
-    first[1:-1] += second_rev
-    first[1:-1] /= 2.
-    return first
+    n = len(val)
+    second_rev_val = val[n//2+1:][::-1]
+    first_val = val[:n//2+1]
+    first_val[1:-1] += second_rev_val
+    first_val[1:-1] /= 2.
+
+    second_rev_err = err[n//2+1:][::-1]
+    first_err = err[:n//2+1]
+    first_err[1:-1] = np.sqrt(first_err[1:-1]**2 + second_rev_err**2) / 2
+
+    return first_val, first_err
 
 def effective_mass(data, delta_t=1):
     r'''
@@ -132,37 +143,39 @@ def exp_fit(x, m1, a1, offset):
 def main():
     options = _parse_args()
 
-    data = loader.average_loader(options.filename)
+    val, err = loader.average_loader(options.filename)
 
-    plot_correlator(data)
-    plot_effective_mass(data)
+    plot_correlator(val, err)
+    #plot_effective_mass(val, err)
 
-def plot_correlator(data):
-    real = np.real(data)
-    folded = fold_data(real)
+def plot_correlator(val, err):
+    real_val = np.real(val)
+    real_err = np.real(err)
+    folded_val, folded_err = fold_data(val, err)
 
-    time = np.array(range(len(data)))
-    time_folded = np.array(range(len(folded)))
+
+    time = np.array(range(len(real_val)))
+    time_folded = np.array(range(len(folded_val)))
 
     fig = pl.figure()
     ax = fig.add_subplot(1, 2, 1)
     ax2 = fig.add_subplot(1, 2, 2)
 
-    ax.plot(real, linestyle='none', marker='+', label='complete')
-    ax2.plot(folded, linestyle='none', marker='+', label='folded')
+    ax.errorbar(time, real_val, yerr=real_err, linestyle='none', marker='+', label='complete')
+    ax2.errorbar(time_folded, folded_val, yerr=folded_err, linestyle='none', marker='+', label='folded')
 
     fit_param = {'color': 'gray'}
     used_param = {'color': 'blue'}
     data_param = {'color': 'black'}
 
-    p = fit_and_plot(cosh_fit, time, real, ax, omit_pre=13, omit_post=12,
+    p = fit_and_plot(cosh_fit, time, real_val, real_err, ax, omit_pre=13, omit_post=12,
                      p0=[0.2, 400, 30, 0], fit_param=fit_param,
                      used_param=used_param, data_param=data_param)
     print('Fit parameters cosh:', p[0])
 
-    p = fit_and_plot(exp_fit, time_folded, folded, ax2, omit_pre=13,
-                     fit_param=fit_param, used_param=used_param,
-                     data_param=data_param)
+    p = fit_and_plot(exp_fit, time_folded, folded_val, folded_err, ax2, omit_pre=13,
+                     p0=[0.222, 700, 0], fit_param=fit_param,
+                     used_param=used_param, data_param=data_param)
     print('Fit parameters exp:', p[0])
 
     ax.set_yscale('log')
@@ -186,8 +199,8 @@ def plot_correlator(data):
     fig.tight_layout()
     fig.savefig('folded.pdf')
 
-def plot_effective_mass(data):
-    real = np.real(data)
+def plot_effective_mass(val, err):
+    real = np.real(val)
     time = np.array(range(len(real)))
     m_eff = effective_mass_cosh(real)
     time_cut = time[1:-1]

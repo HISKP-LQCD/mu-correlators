@@ -43,5 +43,10 @@ def loader_iterator(filenames):
         yield data
 
 def average_loader(filenames):
-    add = lambda x, y: x + y
-    return reduce(add, loader_iterator(filenames)) / len(filenames)
+    sets = np.array(list(loader_iterator(filenames)))
+    total = np.column_stack(sets)
+
+    val = np.real(np.mean(total, axis=1))
+    err = np.real(np.std(total, axis=1))
+
+    return val, err
