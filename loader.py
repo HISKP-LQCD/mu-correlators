@@ -43,10 +43,20 @@ def loader_iterator(filenames):
         yield data
 
 def average_loader(filenames):
+    '''
+    Loads multiple files of the same size and averages over them, also creating
+    an error estimate.
+
+    The files are loaded with loader_iterator().
+
+    :param list filenames: List of filenames
+    :returns: Value and error as a arrays
+    :rtype: tuple of np.array
+    '''
     sets = np.array(list(loader_iterator(filenames)))
     total = np.column_stack(sets)
 
     val = np.real(np.mean(total, axis=1))
-    err = np.real(np.std(total, axis=1))
+    err = np.real(np.std(total, axis=1)) / np.sqrt(len(filenames))
 
     return val, err
