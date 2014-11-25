@@ -9,7 +9,8 @@ from __future__ import division, absolute_import, print_function, unicode_litera
 
 import random
 
-def bootstrap_pre_transform(transform, reduction, sets, sample_count=100):
+def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
+                            sample_count=100):
     '''
     Applies the function to each set and bootstraps the results.
 
@@ -28,7 +29,8 @@ def bootstrap_pre_transform(transform, reduction, sets, sample_count=100):
     return val, err
 
 
-def bootstrap_post_transform(transform, reduction, sets, sample_count=100):
+def bootstrap_post_transform(transform, sets, reduction=average_arrays,
+                             sample_count=100):
     '''
     Bootstraps the sets, reduces them to a single set and transforms them.
 
