@@ -22,10 +22,9 @@ def bootstrap(function, elements, sample_count=100):
         sample = generate_sample(elements)
         results.append(function(sample))
 
-    total = np.column_stack(results)
+    val, err = average_arrays(results)
 
-    val = np.real(np.mean(total, axis=1))
-    err = np.real(np.std(total, axis=1)) / np.sqrt(len(filenames))
+    return val, err
 
 
 def generate_sample(elements):
@@ -38,3 +37,15 @@ def generate_sample(elements):
     result = []
     for i in xrange(len(elements)):
         result.append(random.choice(elements))
+
+
+def average_arrays(arrays):
+    '''
+    Computes the element wise average of a list of arrays.
+    '''
+    total = np.column_stack(arrays)
+
+    val = np.real(np.mean(total, axis=1))
+    err = np.real(np.std(total, axis=1)) / np.sqrt(len(filenames))
+
+    return val, err
