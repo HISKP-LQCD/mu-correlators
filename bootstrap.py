@@ -9,9 +9,9 @@ from __future__ import division, absolute_import, print_function, unicode_litera
 
 import random
 
-def bootstrap(function, elements, sample_count=100):
+def bootstrap_pre_transform(transform, reduction, sets, sample_count=100):
     '''
-    Creates samples from the elements and applies a function to each sample.
+    Applies the function to each set and bootstraps the results.
 
     The return value of the function is assumed to be a one dimensional NumPy
     array. The return value of this function is one array with the values and
@@ -19,8 +19,29 @@ def bootstrap(function, elements, sample_count=100):
     '''
     results = []
     for sample_id in xrange(sample_count):
-        sample = generate_sample(elements)
-        results.append(function(sample))
+        sample = generate_sample(sets)
+        argument = reduction(sample)
+        results.append(transform(argument))
+
+    val, err = average_arrays(results)
+
+    return val, err
+
+
+def bootstrap_post_transform(transform, reduction, sets, sample_count=100):
+    '''
+    Bootstraps the sets, reduces them to a single set and transforms them.
+
+    The return value of the function is assumed to be a one dimensional NumPy
+    array. The return value of this function is one array with the values and
+    another with the errors.
+    '''
+    transformed_sets = map(transform, sets)
+
+    results = []
+    for sample_id in xrange(sample_count):
+        sample = generate_sample(transformed_sets)
+        results.append(reduction(sample))
 
     val, err = average_arrays(results)
 
