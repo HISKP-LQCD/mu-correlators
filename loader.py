@@ -42,6 +42,9 @@ def loader_iterator(filenames):
         data = correlator_loader(filename)
         yield data
 
+def list_loader(filenames):
+    return list(loader_iterator(filenames))
+
 def average_loader(filenames):
     '''
     Loads multiple files of the same size and averages over them, also creating
