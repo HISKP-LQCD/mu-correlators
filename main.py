@@ -138,15 +138,17 @@ def plot_correlator(val, err):
 
 
 def plot_effective_mass(sets):
-    m_eff_val, m_eff_err = bootstrap.bootstrap_pre_transform(effective_mass_cosh, sets)
-    time = np.arange(len(m_eff_val)+2)
+    m_eff_val1, m_eff_err1 = bootstrap.bootstrap_pre_transform(effective_mass_cosh, sets)
+    m_eff_val2, m_eff_err2 = bootstrap.bootstrap_post_transform(effective_mass_cosh, sets)
+    time = np.arange(len(m_eff_val1)+2)
     time_cut = time[1:-1]
 
     fig = pl.figure()
     ax = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
 
-    ax.errorbar(time_cut, m_eff_val, yerr=m_eff_err, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
+    ax.errorbar(time_cut, m_eff_val1, yerr=m_eff_err1, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
+    ax.errorbar(time_cut+0.1, m_eff_val2, yerr=m_eff_err2, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ post')
     ax.set_title(r'Effective Mass $\operatorname{arcosh} ([C(t-1)+C(t+1)]/[2C(t)])$')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$m_\mathrm{eff}(t)$')
@@ -154,11 +156,13 @@ def plot_effective_mass(sets):
     ax.grid(True)
     ax.margins(0.05, 0.05)
 
-    ax2.errorbar(time_cut[8:-8], m_eff_val[8:-8], yerr=m_eff_err[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ complete')
+    ax2.errorbar(time_cut[8:-8], m_eff_val1[8:-8], yerr=m_eff_err1[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
+    ax2.errorbar(time_cut[8:-8]+0.1, m_eff_val2[8:-8], yerr=m_eff_err2[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ post')
     ax2.errorbar([22.5], [0.22293], [0.00035], marker='+')
     ax2.set_xlabel(r'$t/a$')
     ax2.set_ylabel(r'$m_\mathrm{eff}(t)$')
     ax2.grid(True)
+    ax2.legend(loc='best')
     ax2.margins(0.05, 0.05)
 
     fig.tight_layout()
