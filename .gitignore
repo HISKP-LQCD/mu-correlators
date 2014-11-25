@@ -1,4 +1,5 @@
 *.pyc
 _build
+correlator.pdf
 folded.pdf
 m_eff.pdf
