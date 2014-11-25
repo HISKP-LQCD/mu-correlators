@@ -17,36 +17,6 @@ import fit
 import loader
 
 
-def fold_data(val, err):
-    r'''
-    Folds the data around the middle element and averages.
-
-    The expectation is to yield a :math:`\cosh` function. The transformation of
-    the :math:`\{x_i\colon i = 1, \ldots, N\}` will generate new data points
-    like this:
-
-    .. math::
-
-        y_i := \frac{x_i + x_{N-i}}2
-
-    :param np.array val: Array with an even number of elements, values
-    :param np.array err: Array with an even number of elements, errors
-    :returns: Folded array with :math:`N/2` elements
-    :rtype: np.array
-    '''
-    n = len(val)
-    second_rev_val = val[n//2+1:][::-1]
-    first_val = val[:n//2+1]
-    first_val[1:-1] += second_rev_val
-    first_val[1:-1] /= 2.
-
-    second_rev_err = err[n//2+1:][::-1]
-    first_err = err[:n//2+1]
-    first_err[1:-1] = np.sqrt(first_err[1:-1]**2 + second_rev_err**2) / 2
-
-    return first_val, first_err
-
-
 def effective_mass(data, delta_t=1):
     r'''
     Computes the effective mass of the data.
@@ -156,9 +126,9 @@ def plot_effective_mass(sets):
     ax.grid(True)
     ax.margins(0.05, 0.05)
 
-    ax2.errorbar(time_cut[8:-8], m_eff_val1[8:-8], yerr=m_eff_err1[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
-    ax2.errorbar(time_cut[8:-8]+0.1, m_eff_val2[8:-8], yerr=m_eff_err2[8:-8], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ post')
-    ax2.errorbar([22.5], [0.22293], [0.00035], marker='+')
+    ax2.errorbar(time_cut[8:], m_eff_val1[8:], yerr=m_eff_err1[8:], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
+    ax2.errorbar(time_cut[8:]+0.1, m_eff_val2[8:], yerr=m_eff_err2[8:], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ post')
+    ax2.errorbar([max(time_cut[8:])], [0.22293], [0.00035], marker='+')
     ax2.set_xlabel(r'$t/a$')
     ax2.set_ylabel(r'$m_\mathrm{eff}(t)$')
     ax2.grid(True)
@@ -186,7 +156,7 @@ def _parse_args():
 def main():
     options = _parse_args()
 
-    sets = loader.list_loader(options.filename)
+    sets = loader.folded_list_loader(options.filename)
 
     #print('Correlators:')
     #plot_correlator(val, err)
