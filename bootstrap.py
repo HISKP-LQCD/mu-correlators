@@ -4,10 +4,35 @@
 # Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
-# I am used to Python 3, this enables some future features here in Python 2.
 from __future__ import division, absolute_import, print_function, unicode_literals
 
 import random
+
+import numpy as np
+
+
+def average_arrays(arrays):
+    '''
+    Computes the element wise average of a list of arrays.
+    '''
+    total = np.column_stack(arrays)
+
+    val = np.real(np.mean(total, axis=1))
+
+    return val
+
+
+def average_and_std_arrays(arrays):
+    '''
+    Computes the element wise average of a list of arrays.
+    '''
+    total = np.column_stack(arrays)
+
+    val = np.real(np.mean(total, axis=1))
+    err = np.real(np.std(total, axis=1)) / np.sqrt(len(arrays))
+
+    return val, err
+
 
 def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
                             sample_count=100):
@@ -24,7 +49,7 @@ def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
         argument = reduction(sample)
         results.append(transform(argument))
 
-    val, err = average_arrays(results)
+    val, err = average_and_std_arrays(results)
 
     return val, err
 
@@ -45,7 +70,7 @@ def bootstrap_post_transform(transform, sets, reduction=average_arrays,
         sample = generate_sample(transformed_sets)
         results.append(reduction(sample))
 
-    val, err = average_arrays(results)
+    val, err = average_and_std_arrays(results)
 
     return val, err
 
@@ -61,14 +86,4 @@ def generate_sample(elements):
     for i in xrange(len(elements)):
         result.append(random.choice(elements))
 
-
-def average_arrays(arrays):
-    '''
-    Computes the element wise average of a list of arrays.
-    '''
-    total = np.column_stack(arrays)
-
-    val = np.real(np.mean(total, axis=1))
-    err = np.real(np.std(total, axis=1)) / np.sqrt(len(filenames))
-
-    return val, err
+    return result

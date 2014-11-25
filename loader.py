@@ -13,6 +13,7 @@ from __future__ import division, absolute_import, print_function, unicode_litera
 
 import numpy as np
 
+
 def correlator_loader(filename):
     '''
     Loads binary correlator files.
@@ -32,6 +33,7 @@ def correlator_loader(filename):
 
     return data
 
+
 def loader_iterator(filenames):
     '''
     Iterator that gives the data to the given filenames.
@@ -42,8 +44,10 @@ def loader_iterator(filenames):
         data = correlator_loader(filename)
         yield data
 
+
 def list_loader(filenames):
     return list(loader_iterator(filenames))
+
 
 def average_loader(filenames):
     '''

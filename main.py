@@ -12,6 +12,7 @@ import argparse
 import matplotlib.pyplot as pl
 import numpy as np
 
+import bootstrap
 import fit
 import loader
 
@@ -65,23 +66,15 @@ def effective_mass(data, delta_t=1):
     return m
 
 
-def effective_mass_cosh(val, err, dt=1):
+def effective_mass_cosh(val, dt=1):
     r'''
     .. math::
 
         \operatorname{arcosh} \left(\frac{C(t-1)+C(t+1)}{2C(t)}\right)
     '''
     frac_val = (val[:-2*dt] + val[2*dt:]) / val[dt:-dt] / 2
-    frac_err = np.sqrt(
-        (val[2*dt:] / val[dt:-dt] / 2 * err[:-2*dt])**2
-        + (val[:-2*dt] / val[dt:-dt] / 2 * err[2*dt:])**2
-        + ((val[:-2*dt] + val[2*dt:]) / val[dt:-dt]**2 / 2 * err[dt:-dt])**2
-    )
-
     m_eff_val = np.arccosh(frac_val)
-    m_eff_err = 1 / np.sqrt(frac_val**2 - 1) * frac_err
-
-    return m_eff_val, m_eff_err
+    return m_eff_val
 
 
 def plot_correlator(val, err):
@@ -144,9 +137,9 @@ def plot_correlator(val, err):
     fig_f.savefig('folded.pdf')
 
 
-def plot_effective_mass(val, err):
-    time = np.arange(len(val))
-    m_eff_val, m_eff_err = effective_mass_cosh(val, err)
+def plot_effective_mass(sets):
+    m_eff_val, m_eff_err = bootstrap.bootstrap_pre_transform(effective_mass_cosh, sets)
+    time = np.arange(len(m_eff_val)+2)
     time_cut = time[1:-1]
 
     fig = pl.figure()
@@ -189,13 +182,13 @@ def _parse_args():
 def main():
     options = _parse_args()
 
-    val, err = loader.average_loader(options.filename)
+    sets = loader.list_loader(options.filename)
 
-    print('Correlators:')
-    plot_correlator(val, err)
-    print()
+    #print('Correlators:')
+    #plot_correlator(val, err)
+
     print('Effective Mass:')
-    plot_effective_mass(val, err)
+    plot_effective_mass(sets)
 
 
 if __name__ == '__main__':
