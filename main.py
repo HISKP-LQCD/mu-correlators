@@ -161,17 +161,6 @@ def exp_fit(x, m1, a1, offset):
     '''
     return a1 * np.exp(-x*m1) + offset
 
-def main():
-    options = _parse_args()
-
-    val, err = loader.average_loader(options.filename)
-
-    print('Correlators:')
-    plot_correlator(val, err)
-    print()
-    print('Effective Mass:')
-    plot_effective_mass(val, err)
-
 def plot_correlator(val, err):
     real_val = np.real(val)
     real_err = np.real(err)
@@ -266,6 +255,17 @@ def _parse_args():
     options = parser.parse_args()
 
     return options
+
+def main():
+    options = _parse_args()
+
+    val, err = loader.average_loader(options.filename)
+
+    print('Correlators:')
+    plot_correlator(val, err)
+    print()
+    print('Effective Mass:')
+    plot_effective_mass(val, err)
 
 if __name__ == '__main__':
     main()
