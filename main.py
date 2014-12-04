@@ -4,6 +4,11 @@
 # Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
+r'''
+With the data from
+``A100.24_L24_T48_beta190_mul0100_musig150_mudel190_kappa1632550/ev120/TB2_SO_LI6_new/C2_pi+-_conf????.dat``, I got :math:`0.22229 \pm 0.00003`
+'''
+
 # I am used to Python 3, this enables some future features here in Python 2.
 from __future__ import division, absolute_import, print_function, unicode_literals
 
