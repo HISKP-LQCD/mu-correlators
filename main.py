@@ -43,11 +43,11 @@ def effective_mass_cosh(val, dt=1):
         \operatorname{arcosh} \left(\frac{C(t-1)+C(t+1)}{2C(t)}\right)
     '''
     frac = (val[:-2*dt] + val[2*dt:]) / val[dt:-dt] / 2
-    m_eff = np.arccosh(frac_val)
+    m_eff = np.arccosh(frac)
     return m_eff
 
 
-def plot_correlator(val, err):
+def plot_correlator(sets):
     real_val = np.real(val)
     real_err = np.real(err)
     folded_val, folded_err = fold_data(val, err)
@@ -156,8 +156,8 @@ def main():
 
     sets = loader.folded_list_loader(options.filename)
 
-    #print('Correlators:')
-    #plot_correlator(val, err)
+    print('Correlators:')
+    plot_correlator(sets)
 
     print('Effective Mass:')
     plot_effective_mass(sets)
