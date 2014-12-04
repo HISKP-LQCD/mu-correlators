@@ -25,7 +25,8 @@ def effective_mass(data, delta_t=1):
 
     .. math::
 
-        m_\text{eff} := - \frac{1}{\Delta t} \ln\left(\frac{C(t + \Delta t)}{C(t)}\right)
+        m_\text{eff} := - \frac{1}{\Delta t}
+        \ln\left(\frac{C(t + \Delta t)}{C(t)}\right)
 
     :param np.array data: Time series of correlation functions, :math:`C(t)`
     :param int delta_t: Number of elements to use as :math:`\Delta t`
