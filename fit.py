@@ -75,10 +75,9 @@ def cosh_fit(x, m, a, shift, offset):
         = a_1 \exp(- m_1 x) + a_2 \exp(- m_2 [n - x]) + \mathrm{offset}
 
     :param np.array x: Input values
-    :param float m1: Effective mass for falling exponential
-    :param float m2: Effective mass for rising exponential
-    :param float a1: Amplitude for falling exponential
-    :param float a2: Amplitude for rising exponential
+    :param float m: Effective mass
+    :param float a: Amplitude exponential
+    :param int shift: Value of :math:`x` where :math:`f(x) = f(0)`
     :param float offset: Constant offset
     '''
     y = shift - x
