@@ -14,24 +14,30 @@ def _cut(x, y, yerr, omit_pre, omit_post):
     if omit_post == 0:
         used_x = x[omit_pre:]
         used_y = y[omit_pre:]
-        used_yerr = yerr[omit_pre:]
+        if yerr is None:
+            used_yerr = None
+        else:
+            used_yerr = yerr[omit_pre:]
     else:
         end = - omit_post - 1
         used_x = x[omit_pre:end]
         used_y = y[omit_pre:end]
-        used_yerr = yerr[omit_pre:end]
+        if yerr is None:
+            used_yerr = None
+        else:
+            used_yerr = yerr[omit_pre:end]
 
     return used_x, used_y, used_yerr
 
 
-def fit(func, x, y, yerr, omit_pre=0, omit_post=0, p0=None):
+def fit(func, x, y, yerr=None, omit_pre=0, omit_post=0, p0=None):
     used_x, used_y, used_yerr = _cut(x, y, yerr, omit_pre, omit_post)
     popt, pconv = op.curve_fit(func, used_x, used_y, p0=p0, sigma=used_yerr)
 
     return popt
 
 
-def fit_and_plot(func, x, y, yerr, axes, omit_pre=0, omit_post=0, p0=None,
+def fit_and_plot(axes, func, x, y, yerr=None, omit_pre=0, omit_post=0, p0=None,
                  fit_param={}, data_param={}, used_param={}, axes_res=None):
     used_x, used_y, used_yerr = _cut(x, y, yerr, omit_pre, omit_post)
     popt = fit(func, used_x, used_y, used_yerr, p0=p0)
