@@ -42,9 +42,9 @@ def effective_mass_cosh(val, dt=1):
 
         \operatorname{arcosh} \left(\frac{C(t-1)+C(t+1)}{2C(t)}\right)
     '''
-    frac_val = (val[:-2*dt] + val[2*dt:]) / val[dt:-dt] / 2
-    m_eff_val = np.arccosh(frac_val)
-    return m_eff_val
+    frac = (val[:-2*dt] + val[2*dt:]) / val[dt:-dt] / 2
+    m_eff = np.arccosh(frac_val)
+    return m_eff
 
 
 def plot_correlator(val, err):
