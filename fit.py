@@ -63,7 +63,7 @@ def fit_and_plot(func, x, y, yerr, axes, omit_pre=0, omit_post=0, p0=None,
     print('χ2/DOF:', chisq/dof)
     print('p:', p)
 
-    return list(zip(popt, error))
+    return popt
 
 
 def cosh_fit(x, m, a, shift, offset):
