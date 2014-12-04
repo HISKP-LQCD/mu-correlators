@@ -15,6 +15,7 @@ import numpy as np
 import bootstrap
 import fit
 import loader
+import unitprint
 
 
 def effective_mass(data, delta_t=1):
@@ -48,6 +49,20 @@ def effective_mass_cosh(val, dt=1):
     return m_eff
 
 
+def fit_correlator(sets):
+    popt, perr = bootstrap.bootstrap_pre_transform(correlator_single_fit, sets)
+    print(popt)
+    print(perr)
+    print(unitprint.siunitx(popt, perr))
+
+
+def correlator_single_fit(values):
+    time = np.array(range(len(values)))
+    p = fit.fit(fit.cosh_fit, time, values, omit_pre=13,
+                p0=[0.222, 700, 30, 0])
+    return p
+
+
 def plot_correlator(sets):
     folded_val, folded_err = bootstrap.bootstrap_pre_transform(lambda x: x, sets)
 
@@ -63,8 +78,8 @@ def plot_correlator(sets):
     used_param = {'color': 'blue'}
     data_param = {'color': 'black'}
 
-    p = fit.fit_and_plot(fit.cosh_fit, time_folded, folded_val, folded_err,
-                         ax2, omit_pre=13, p0=[0.222, 700, 30, 0],
+    p = fit.fit_and_plot(ax2, fit.cosh_fit, time_folded, folded_val,
+                         folded_err, omit_pre=13, p0=[0.222, 700, 30, 0],
                          fit_param=fit_param, used_param=used_param,
                          data_param=data_param)
     print('Fit parameters folded:', p[0])
@@ -130,11 +145,15 @@ def main():
     options = _parse_args()
 
     sets = loader.folded_list_loader(options.filename)
+    print(len(sets), 'set loaded.')
 
-    print('Correlators:')
+    print('Plot correlators:')
     plot_correlator(sets)
 
-    print('Effective Mass:')
+    print('Fit correlators:')
+    fit_correlator(sets)
+
+    print('Effective mass:')
     plot_effective_mass(sets)
 
 

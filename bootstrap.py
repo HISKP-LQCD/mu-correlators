@@ -35,7 +35,7 @@ def average_and_std_arrays(arrays):
 
 
 def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
-                            sample_count=100):
+                            sample_count=250):
     '''
     Bootstraps the sets, reduces them to a single set and transforms them.
 
@@ -57,7 +57,7 @@ def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
 
 
 def bootstrap_post_transform(transform, sets, reduction=average_arrays,
-                             sample_count=100):
+                             sample_count=250):
     '''
     Applies the transformation to each set and bootstraps the results.
 
