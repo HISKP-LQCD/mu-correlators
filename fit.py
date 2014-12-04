@@ -62,6 +62,8 @@ def fit_and_plot(axes, func, x, y, yerr=None, omit_pre=0, omit_post=0, p0=None,
                       marker='+', linestyle='none', color='red', alpha=0.3)
     axes_res.set_ylabel('Residual')
 
+    axes_res.plot([np.min(used_x), np.max(used_x)], [0, 0], color='red', alpha=0.2)
+
     dof = len(used_y) - len(popt) - 1
     chisq, p = scipy.stats.chisquare(used_y, func(used_x, *popt), ddof=len(popt))
 
