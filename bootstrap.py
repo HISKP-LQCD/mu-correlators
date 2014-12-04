@@ -35,7 +35,7 @@ def average_and_std_arrays(arrays):
 
 
 def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
-                            sample_count=250):
+                            sample_count=250, seed=None):
     '''
     Bootstraps the sets, reduces them to a single set and transforms them.
 
@@ -45,6 +45,8 @@ def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
     array. The return value of this function is one array with the values and
     another with the errors.
     '''
+    random.seed(seed)
+
     results = []
     for sample_id in xrange(sample_count):
         sample = generate_sample(sets)
@@ -57,7 +59,7 @@ def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
 
 
 def bootstrap_post_transform(transform, sets, reduction=average_arrays,
-                             sample_count=250):
+                             sample_count=250, seed=None):
     '''
     Applies the transformation to each set and bootstraps the results.
 
@@ -65,6 +67,8 @@ def bootstrap_post_transform(transform, sets, reduction=average_arrays,
     array. The return value of this function is one array with the values and
     another with the errors.
     '''
+    random.seed(seed)
+
     transformed_sets = map(transform, sets)
 
     results = []
