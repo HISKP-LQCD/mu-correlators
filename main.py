@@ -108,7 +108,6 @@ def plot_correlator(val, err):
 
 def plot_effective_mass(sets):
     m_eff_val1, m_eff_err1 = bootstrap.bootstrap_pre_transform(effective_mass_cosh, sets)
-    m_eff_val2, m_eff_err2 = bootstrap.bootstrap_post_transform(effective_mass_cosh, sets)
     time = np.arange(len(m_eff_val1)+2)
     time_cut = time[1:-1]
 
