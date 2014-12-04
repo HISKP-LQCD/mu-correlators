@@ -57,7 +57,7 @@ def fit_and_plot(func, x, y, yerr, axes, omit_pre=0, omit_post=0, p0=None,
     axes_res.set_ylabel('Residual')
 
     dof = len(used_y) - len(popt) - 1
-    chisq, p = scipy.stats.chisquare(used_y, func(used_y, *popt), ddof=len(popt))
+    chisq, p = scipy.stats.chisquare(used_y, func(used_x, *popt), ddof=len(popt))
 
     print('χ2:', chisq)
     print('χ2/DOF:', chisq/dof)
