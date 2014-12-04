@@ -59,6 +59,8 @@ def bootstrap_post_transform(transform, sets, reduction=average_arrays,
     '''
     Bootstraps the sets, reduces them to a single set and transforms them.
 
+    This is the recommended method!
+
     The return value of the function is assumed to be a one dimensional NumPy
     array. The return value of this function is one array with the values and
     another with the errors.
