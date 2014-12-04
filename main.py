@@ -50,15 +50,19 @@ def effective_mass_cosh(val, dt=1):
 
 
 def fit_correlator(sets):
-    popt, perr = bootstrap.bootstrap_pre_transform(correlator_single_fit, sets)
+    popt, perr = bootstrap.bootstrap_pre_transform(
+        correlator_single_fit, sets,
+        reduction=bootstrap.average_and_std_arrays,
+    )
     print(popt)
     print(perr)
     print(unitprint.siunitx(popt, perr))
 
 
-def correlator_single_fit(values):
-    time = np.array(range(len(values)))
-    p = fit.fit(fit.cosh_fit, time, values, omit_pre=13,
+def correlator_single_fit(params):
+    val, err = params
+    time = np.array(range(len(val)))
+    p = fit.fit(fit.cosh_fit, time, val, err, omit_pre=13,
                 p0=[0.222, 700, 30, 0])
     return p
 
