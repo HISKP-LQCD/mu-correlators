@@ -52,7 +52,6 @@ def plot_correlator(val, err):
     real_err = np.real(err)
     folded_val, folded_err = fold_data(val, err)
 
-
     time = np.array(range(len(real_val)))
     time_folded = np.array(range(len(folded_val)))
 
