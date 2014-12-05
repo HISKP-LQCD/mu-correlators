@@ -11,7 +11,13 @@ Helper functions to load the binary data that I was given from
 
 from __future__ import division, absolute_import, print_function, unicode_literals
 
+import re
+
 import numpy as np
+
+
+TWO_PATTERN = re.compile(r'C2_pi\+-_conf(\d{4}).dat')
+FOUR_PATTERN = re.compile(r'C4_(\d)_conf(\d{4}).dat')
 
 
 def correlator_loader(filename):
