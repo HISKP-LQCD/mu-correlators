@@ -155,17 +155,20 @@ def _parse_args():
 def main():
     options = _parse_args()
 
-    sets = loader.folded_list_loader(options.filename)
-    print(len(sets), 'set loaded.')
+    if len(options.filename) == 1:
+        data = loader.folder_loader(options.filename[0])
+    else:
+        sets = loader.folded_list_loader(options.filename)
+        print(len(sets), 'set loaded.')
 
-    print('Plot correlators:')
-    plot_correlator(sets)
+        print('Plot correlators:')
+        plot_correlator(sets)
 
-    print('Fit correlators:')
-    fit_correlator(sets)
+        print('Fit correlators:')
+        fit_correlator(sets)
 
-    print('Effective mass:')
-    plot_effective_mass(sets)
+        print('Effective mass:')
+        plot_effective_mass(sets)
 
 
 if __name__ == '__main__':

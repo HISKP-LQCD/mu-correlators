@@ -11,6 +11,8 @@ Helper functions to load the binary data that I was given from
 
 from __future__ import division, absolute_import, print_function, unicode_literals
 
+import os
+import os.path
 import re
 
 import numpy as np
@@ -18,6 +20,36 @@ import numpy as np
 
 TWO_PATTERN = re.compile(r'C2_pi\+-_conf(\d{4}).dat')
 FOUR_PATTERN = re.compile(r'C4_(\d)_conf(\d{4}).dat')
+
+
+def folder_loader(path):
+    '''
+    Loads all the two-point and four-point correlation functions from the given
+    folder.
+    '''
+    data = {
+        2: [],
+        4: {
+            1: [],
+            2: [],
+            3: [],
+        },
+    }
+
+    for filename in sorted(os.listdir(path)):
+        print(filename)
+
+        m = TWO_PATTERN.match(filename)
+        if m:
+            data[2].append(correlator_loader(os.path.join(path, filename)))
+            continue
+
+        m = FOUR_PATTERN.match(filename)
+        if m:
+            number = int(m.group(1))
+            data[4][number].append(correlator_loader(os.path.join(path, filename)))
+            continue
+
 
 
 def correlator_loader(filename):
