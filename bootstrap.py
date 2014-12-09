@@ -29,7 +29,7 @@ def average_and_std_arrays(arrays):
     total = np.column_stack(arrays)
 
     val = np.real(np.mean(total, axis=1))
-    err = np.real(np.std(total, axis=1)) / np.sqrt(len(arrays))
+    err = np.real(np.std(total, axis=1)) #/ np.sqrt(len(arrays))
 
     return val, err
 
