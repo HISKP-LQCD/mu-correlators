@@ -157,8 +157,10 @@ def main():
 
     if len(options.filename) == 1:
         two_points, four_points = loader.folder_loader(options.filename[0])
-        print(len(two_points))
-        print(len(four_points))
+
+        # Combine the two lists of data into one list of lists. That way the
+        # configurations are grouped together.
+        combined = zip(two_points, four_points)
     else:
         sets = loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')
