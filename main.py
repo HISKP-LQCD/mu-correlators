@@ -74,6 +74,26 @@ def correlator_single_fit(params):
     return p
 
 
+def mass_difference(params):
+    # Unpack all the arguments from the list.
+    (c2_val, c2_err), (c4_val, c4_err) = params
+
+    # Generate a single time, they are all the same.
+    time = np.array(range(len(c2_val)))
+
+    # Perform the fits.
+    p2 = fit.fit(fit.cosh_fit, time, c2_val, c2_err, omit_pre=13,
+                p0=[0.222, 700, 30, 0])
+    p4 = fit.fit(fit.cosh_fit, time, c4_val, c4_err, omit_pre=13,
+                p0=[0.222, 700, 30, 0])
+
+    m2 = p2[0]
+    m4 = p4[0]
+
+    delta_m = m4 - m2
+
+    return m2, m4, delta_m
+
 def plot_correlator(sets):
     folded_val, folded_err = bootstrap.bootstrap_pre_transform(lambda x: x, sets)
 
@@ -161,6 +181,14 @@ def main():
         # Combine the two lists of data into one list of lists. That way the
         # configurations are grouped together.
         combined = zip(two_points, four_points)
+
+        val, err = bootstrap.bootstrap_pre_transform(
+            mass_difference,
+            combined,
+            bootstrap.average_combined_array,
+        )
+
+        print(unitprint.siunitx(val, err))
     else:
         sets = loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')

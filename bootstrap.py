@@ -110,6 +110,6 @@ def average_combined_array(combined):
     result = []
     npoints = zip(*combined)
     for npoint in npoints:
-        result.append(average_arrays(npoints))
+        result.append(average_and_std_arrays(npoints))
 
     return result
