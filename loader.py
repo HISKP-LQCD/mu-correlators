@@ -35,15 +35,18 @@ def folder_loader(path):
     }
 
     for filename in sorted(os.listdir(path)):
+        # Load and fold the data.
+        data = fold_data(correlator_loader(os.path.join(path, filename)))
+
         m = TWO_PATTERN.match(filename)
         if m:
-            two_points.append(correlator_loader(os.path.join(path, filename)))
+            two_points.append(data)
             continue
 
         m = FOUR_PATTERN.match(filename)
         if m:
             number = int(m.group(1))
-            four_points[number].append(correlator_loader(os.path.join(path, filename)))
+            four_points[number].append(data)
             continue
 
     four_point = [
