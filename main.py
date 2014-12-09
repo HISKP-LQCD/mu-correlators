@@ -94,7 +94,7 @@ def mass_difference(params):
 
     return m2, m4, delta_m
 
-def plot_correlator(sets):
+def plot_correlator(sets, name):
     folded_val, folded_err = bootstrap.bootstrap_pre_transform(lambda x: x, sets)
 
     time_folded = np.array(range(len(folded_val)))
@@ -113,7 +113,7 @@ def plot_correlator(sets):
                          folded_err, omit_pre=13, p0=[0.222, 700, 30, 0],
                          fit_param=fit_param, used_param=used_param,
                          data_param=data_param)
-    print('Fit parameters folded:', p[0])
+    print('Fit parameters folded (mass, amplitude, shift, offset:', p)
 
     ax2.set_yscale('log')
     ax2.margins(0.05, tight=False)
@@ -126,10 +126,10 @@ def plot_correlator(sets):
     #ax2.yaxis.set_label_position('right')
 
     fig_f.tight_layout()
-    fig_f.savefig('folded.pdf')
+    fig_f.savefig('{}_folded.pdf'.format(name))
 
 
-def plot_effective_mass(sets):
+def plot_effective_mass(sets, name):
     m_eff_val1, m_eff_err1 = bootstrap.bootstrap_pre_transform(effective_mass_cosh, sets)
     time = np.arange(len(m_eff_val1)+2)
     time_cut = time[1:-1]
@@ -155,7 +155,7 @@ def plot_effective_mass(sets):
     ax2.margins(0.05, 0.05)
 
     fig.tight_layout()
-    fig.savefig('m_eff.pdf')
+    fig.savefig('{}_m_eff.pdf'.format(name))
 
 
 def _parse_args():
@@ -193,18 +193,23 @@ def main():
             unitprint.siunitx(val, err),
         ):
             print(name, string)
+
+        plot_correlator(two_points, 'c2')
+        plot_correlator(four_points, 'c4')
+        plot_effective_mass(two_points, 'c2')
+        plot_effective_mass(four_points, 'c4')
     else:
         sets = loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')
 
         print('Plot correlators:')
-        plot_correlator(sets)
+        plot_correlator(sets, 'c2-single')
 
         print('Fit correlators:')
         fit_correlator(sets)
 
         print('Effective mass:')
-        plot_effective_mass(sets)
+        plot_effective_mass(sets, 'c2-single')
 
 
 if __name__ == '__main__':
