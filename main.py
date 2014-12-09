@@ -196,7 +196,11 @@ def main():
             bootstrap.average_combined_array,
         )
 
-        print(unitprint.siunitx(val, err))
+        for name, string in zip(
+            ['m₂', 'm₄', 'ΔE'],
+            unitprint.siunitx(val, err),
+        ):
+            print(name, string)
     else:
         sets = loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')
