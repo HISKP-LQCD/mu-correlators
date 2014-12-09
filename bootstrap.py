@@ -93,3 +93,23 @@ def generate_sample(elements):
         result.append(random.choice(elements))
 
     return result
+
+def average_combined_array(combined):
+    '''
+    Given a list of tuples or arrays of the kind “configuration → n-point →
+    correlator“, it creates the average of the correlator over all the
+    configurations for each “n-point”.
+
+    It will then return the averaged out correlator for the two- and for the
+    four-point correlation function.
+
+    The input list is converted into the structure “n-point → configuration →
+    correlator“ using zip(). Then the function average_arrays() is used on each
+    element of the outer list.
+    '''
+    result = []
+    npoints = zip(*combined)
+    for npoint in npoints:
+        result.append(average_arrays(npoints))
+
+    return result
