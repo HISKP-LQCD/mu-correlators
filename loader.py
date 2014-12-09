@@ -27,13 +27,11 @@ def folder_loader(path):
     Loads all the two-point and four-point correlation functions from the given
     folder.
     '''
-    data = {
+    two_points = []
+    four_points = {
+        1: [],
         2: [],
-        4: {
-            1: [],
-            2: [],
-            3: [],
-        },
+        3: [],
     }
 
     for filename in sorted(os.listdir(path)):
@@ -41,15 +39,23 @@ def folder_loader(path):
 
         m = TWO_PATTERN.match(filename)
         if m:
-            data[2].append(correlator_loader(os.path.join(path, filename)))
+            two_points.append(correlator_loader(os.path.join(path, filename)))
             continue
 
         m = FOUR_PATTERN.match(filename)
         if m:
             number = int(m.group(1))
-            data[4][number].append(correlator_loader(os.path.join(path, filename)))
+            four_points[number].append(correlator_loader(os.path.join(path, filename)))
             continue
 
+    two_points.sort()
+    four_points[1].sort()
+    four_points[2].sort()
+    four_points[3].sort()
+
+    four_point = [c1 + c2 - 2 * c3 for c1, c2, c3 in zip(*four_points)]
+
+    return two_points, four_point
 
 
 def correlator_loader(filename):
