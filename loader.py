@@ -85,32 +85,8 @@ def loader_iterator(filenames):
         yield data
 
 
-def list_loader(filenames):
-    return list(loader_iterator(filenames))
-
-
 def folded_list_loader(filenames):
     return [fold_data(data) for data in loader_iterator(filenames)]
-
-
-def average_loader(filenames):
-    '''
-    Loads multiple files of the same size and averages over them, also creating
-    an error estimate.
-
-    The files are loaded with loader_iterator().
-
-    :param list filenames: List of filenames
-    :returns: Value and error as a arrays
-    :rtype: tuple of np.array
-    '''
-    sets = np.array(list(loader_iterator(filenames)))
-    total = np.column_stack(sets)
-
-    val = np.real(np.mean(total, axis=1))
-    err = np.real(np.std(total, axis=1)) / np.sqrt(len(filenames))
-
-    return val, err
 
 
 def fold_data(val):
@@ -137,33 +113,3 @@ def fold_data(val):
     first_val[1:-1] /= 2.
 
     return first_val
-
-
-def fold_data_with_error(val, err):
-    r'''
-    Folds the data around the middle element and averages.
-
-    The expectation is to yield a :math:`\cosh` function. The transformation of
-    the :math:`\{x_i\colon i = 1, \ldots, N\}` will generate new data points
-    like this:
-
-    .. math::
-
-        y_i := \frac{x_i + x_{N-i}}2
-
-    :param np.array val: Array with an even number of elements, values
-    :param np.array err: Array with an even number of elements, errors
-    :returns: Folded array with :math:`N/2` elements
-    :rtype: tuple of np.array
-    '''
-    n = len(val)
-    second_rev_val = val[n//2+1:][::-1]
-    first_val = val[:n//2+1]
-    first_val[1:-1] += second_rev_val
-    first_val[1:-1] /= 2.
-
-    second_rev_err = err[n//2+1:][::-1]
-    first_err = err[:n//2+1]
-    first_err[1:-1] = np.sqrt(first_err[1:-1]**2 + second_rev_err**2) / 2
-
-    return first_val, first_err
