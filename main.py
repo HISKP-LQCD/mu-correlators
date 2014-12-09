@@ -156,7 +156,9 @@ def main():
     options = _parse_args()
 
     if len(options.filename) == 1:
-        data = loader.folder_loader(options.filename[0])
+        two_points, four_points = loader.folder_loader(options.filename[0])
+        print(len(two_points))
+        print(len(four_points))
     else:
         sets = loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')

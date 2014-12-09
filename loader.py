@@ -48,12 +48,10 @@ def folder_loader(path):
             four_points[number].append(correlator_loader(os.path.join(path, filename)))
             continue
 
-    two_points.sort()
-    four_points[1].sort()
-    four_points[2].sort()
-    four_points[3].sort()
-
-    four_point = [c1 + c2 - 2 * c3 for c1, c2, c3 in zip(*four_points)]
+    four_point = [
+        c1 + c2 - 2 * c3
+        for c1, c2, c3 in zip(four_points[1], four_points[2], four_points[3])
+    ]
 
     return two_points, four_point
 
