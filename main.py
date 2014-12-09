@@ -82,6 +82,11 @@ def mass_difference(params):
     time = np.array(range(len(c2_val)))
 
     # Perform the fits.
+    pl.errorbar(time, c2_val, c2_err)
+    pl.errorbar(time+0.1, c4_val, c4_err)
+    pl.show()
+    #input()
+    sys.exit(0)
     p2 = fit.fit(fit.cosh_fit, time, c2_val, c2_err, omit_pre=13,
                 p0=[0.222, 700, 30, 0])
     p4 = fit.fit(fit.cosh_fit, time, c4_val, c4_err, omit_pre=13,
