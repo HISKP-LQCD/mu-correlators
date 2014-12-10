@@ -74,7 +74,26 @@ def fit_and_plot(axes, func, x, y, yerr=None, omit_pre=0, omit_post=0, p0=None,
     return popt
 
 
-def cosh_fit(x, m, a, shift, offset):
+def cosh_fit(x, m, a, shift):
+    '''
+
+    .. math::
+
+        \operatorname{fit}(x; m_1, m_2, a_1, a_2)
+        = a_1 \exp(- m_1 x) + a_2 \exp(- m_2 [n - x])
+
+    :param np.array x: Input values
+    :param float m: Effective mass
+    :param float a: Amplitude exponential
+    :param int shift: Value of :math:`x` where :math:`f(x) = f(0)`
+    '''
+    y = shift - x
+    first = a * np.exp(-x*m)
+    second = a * np.exp(-y*m)
+    return first + second
+
+
+def cosh_fit_offset(x, m, a, shift, offset):
     '''
 
     .. math::
@@ -88,10 +107,7 @@ def cosh_fit(x, m, a, shift, offset):
     :param int shift: Value of :math:`x` where :math:`f(x) = f(0)`
     :param float offset: Constant offset
     '''
-    y = shift - x
-    first = a * np.exp(-x*m)
-    second = a * np.exp(-y*m)
-    return first + second + offset
+    return cosh_fit(x, m, a, shift) + offset
 
 
 def exp_fit(x, m1, a1, offset):

@@ -83,8 +83,8 @@ def mass_difference(params):
 
     # Perform the fits.
     p2 = fit.fit(fit.cosh_fit, time, c2_val, c2_err, omit_pre=13,
-                p0=[0.222, 700, 30, 0])
-    p4 = fit.fit(fit.cosh_fit, time, c4_val, c4_err, omit_pre=13,
+                p0=[0.222, 700, 30])
+    p4 = fit.fit(fit.cosh_fit_offset, time, c4_val, c4_err, omit_pre=13,
                 p0=[0.222, 700, 30, 0])
 
     m2 = p2[0]
@@ -94,7 +94,7 @@ def mass_difference(params):
 
     return m2, m4, delta_m
 
-def plot_correlator(sets, name):
+def plot_correlator(sets, name, offset=False):
     folded_val, folded_err = bootstrap.bootstrap_pre_transform(lambda x: x, sets)
 
     time_folded = np.array(range(len(folded_val)))
@@ -109,8 +109,15 @@ def plot_correlator(sets, name):
     used_param = {'color': 'blue'}
     data_param = {'color': 'black'}
 
-    p = fit.fit_and_plot(ax2, fit.cosh_fit, time_folded, folded_val,
-                         folded_err, omit_pre=13, p0=[0.222, 700, 30, 0],
+    p0 = [0.222, 700, 30]
+    if offset:
+        fit_func = fit.cosh_fit_offset
+        p0.append(0)
+    else:
+        fit_func = fit.cosh_fit
+
+    p = fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
+                         folded_err, omit_pre=13, p0=p0,
                          fit_param=fit_param, used_param=used_param,
                          data_param=data_param)
     print('Fit parameters folded (mass, amplitude, shift, offset:', p)
@@ -197,7 +204,7 @@ def main():
         plot_correlator(two_points, 'c2')
         plot_correlator(four_points, 'c4')
         plot_effective_mass(two_points, 'c2')
-        plot_effective_mass(four_points, 'c4')
+        plot_effective_mass(four_points, 'c4', offset=True)
     else:
         sets = loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')
