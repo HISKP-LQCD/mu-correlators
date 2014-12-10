@@ -90,7 +90,7 @@ def mass_difference(params):
     m2 = p2[0]
     m4 = p4[0]
 
-    delta_m = m4 - m2
+    delta_m = m4 - 2 * m2
 
     return m2, m4, delta_m
 
