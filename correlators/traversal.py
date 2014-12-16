@@ -28,5 +28,7 @@ def handle_path(path):
                 all_results[root] = correlators.analysis.handle_path(root)
             except RuntimeError as e:
                 LOGGER.error(str(e))
+            except ValueError as e:
+                LOGGER.error(str(e))
 
     return all_results
