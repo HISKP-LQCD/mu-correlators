@@ -40,12 +40,12 @@ def plot_correlator(sets, name, shift, offset=False):
     used_param = {'color': 'blue'}
     data_param = {'color': 'black'}
 
-    p0 = [0.222, 700]
     if offset:
         fit_func = correlators.fit.cosh_fit_offset_decorator(shift)
-        p0.append(0)
+        p0 = [0.45, folded_val[0], 0]
     else:
         fit_func = correlators.fit.cosh_fit_decorator(shift)
+        p0 = [0.22, folded_val[0]]
 
     try:
         p = correlators.fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,

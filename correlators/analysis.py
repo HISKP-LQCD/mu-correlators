@@ -79,7 +79,7 @@ def mass_difference_decorator(shift):
                                  omit_pre=13, p0=[0.222, c2_val[0]])
         fit4 = correlators.fit.cosh_fit_offset_decorator(shift)
         p4 = correlators.fit.fit(fit4, time, c4_val,
-                                 c4_err, omit_pre=13, p0=[0.222, c2_val[0], 0])
+                                 c4_err, omit_pre=13, p0=[0.45, c2_val[0], 0])
 
         m2 = p2[0]
         m4 = p4[0]
