@@ -17,3 +17,10 @@ def handle_path(path):
     for root, dirs, files in os.walk(path):
         if len(dirs) == 0:
             print('Found a leaf at', root)
+            _handle_leaf(path)
+
+def _handle_leaf(path):
+    '''
+    Performs the analysis of all the files in the given folder.
+    '''
+
