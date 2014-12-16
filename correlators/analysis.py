@@ -42,8 +42,6 @@ def handle_path(path):
 
     shift = int(parameters['T'])
 
-    LOGGER.info('Shift is %d.', shift)
-
     val, err = correlators.bootstrap.bootstrap_pre_transform(
         mass_difference_decorator(shift),
         combined,
