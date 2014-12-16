@@ -34,7 +34,7 @@ def handle_path(path):
     LOGGER.info('Working on path `%s`.', path)
     two_points, four_points, parameters = correlators.loader.folder_loader(path)
 
-    name = parameters['all']
+    name = parameters['path'].replace('/', '__')
 
     # Combine the two lists of data into one list of lists. That way the
     # configurations are grouped together.

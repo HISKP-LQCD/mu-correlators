@@ -23,6 +23,8 @@ TWO_PATTERN = re.compile(r'C2_pi\+-_conf(\d{4}).dat')
 FOUR_PATTERN = re.compile(r'C4_(\d)_conf(\d{4}).dat')
 
 CONFIGURATION_PATTERN = re.compile(r'''
+                                   ^.*
+                                   (?P<path>
                                    (?P<type>[ABCD])
                                    (?P<type2>[0-9.]+)_
                                    L(?P<L>\d+)_
@@ -32,6 +34,7 @@ CONFIGURATION_PATTERN = re.compile(r'''
                                    musig(?P<musig>\d+)_
                                    mudel(?P<mudel>\d+)_
                                    kappa(?P<kappa>\d+)
+                                   .*)$
                                    ''', re.X)
 
 
@@ -47,10 +50,9 @@ def folder_loader(path):
         3: [],
     }
 
-    path_m = CONFIGURATION_PATTERN.search(path)
+    path_m = CONFIGURATION_PATTERN.match(path)
     if path_m:
         parameters = path_m.groupdict()
-        parameters['all'] = path_m.group(0)
     else:
         raise RuntimeError(
             'Cannot parse parameters out of “{}”. Please check the regular '
