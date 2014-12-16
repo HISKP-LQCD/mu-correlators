@@ -36,7 +36,8 @@ def handle_path(path):
                 continue
 
             try:
-                all_results[root] = correlators.analysis.handle_path(root)
+                abspath = os.path.abspath(root)
+                all_results[abspath] = correlators.analysis.handle_path(root)
             except RuntimeError as e:
                 LOGGER.error(str(e))
             except ValueError as e:
