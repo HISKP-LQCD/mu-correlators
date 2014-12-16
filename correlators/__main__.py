@@ -57,7 +57,7 @@ def present_result_dict(result):
         print('{:_^15s}  {:_^15s}  {:_^15s}  {:_^20s}'.format(
             'Name', 'Value', 'Error', 'Value+Error'
         ))
-        for name, (val, err) in quantities.iteritems():
+        for name, (val, err) in sorted(quantities.iteritems()):
             print('{:15s}  {:15g}  {:15g}  {:^20s}'.format(
                 name, val, err, unitprint.siunitx(val, err)
             ))
