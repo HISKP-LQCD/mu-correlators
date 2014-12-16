@@ -22,14 +22,15 @@ TWO_PATTERN = re.compile(r'C2_pi\+-_conf(\d{4}).dat')
 FOUR_PATTERN = re.compile(r'C4_(\d)_conf(\d{4}).dat')
 
 CONFIGURATION_PATTERN = re.compile(r'''
-                                   A100.24_
-                                   L24_
-                                   T48_
-                                   beta190_
-                                   mul0100_
-                                   musig150_
-                                   mudel190_
-                                   kappa1632550
+                                   (?P<type>[ABCD])
+                                   (?P<type2>[\d.]+)_
+                                   L(?P<L>\d+)_
+                                   T(?P<T>\d+)_
+                                   beta(?P<beta>\d+)_
+                                   mul(?P<mul>\d+)_
+                                   musig(?P<musig>\d+)_
+                                   mudel(?P<mudel>\d+)_
+                                   kappa(?P<kappa>\d+)
                                    ''', re.X)
 
 
