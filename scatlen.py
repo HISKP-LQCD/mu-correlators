@@ -25,4 +25,4 @@ def a0_intercept_generator(m, w, l):
 def compute_a0(m, w, l):
     a0_intercept = a0_intercept_generator(m, w, l)
 
-    return scipy.optimize.newton(a0_intercept, 0)
+    return op.newton(a0_intercept, 0)
