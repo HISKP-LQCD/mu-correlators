@@ -50,7 +50,7 @@ def present_result_dict(result):
     print('Results')
     print('=======')
 
-    for path, quantities in result.iteritems():
+    for path, quantities in sorted(result.iteritems()):
         print()
         print(path)
         print()
