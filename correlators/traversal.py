@@ -22,6 +22,11 @@ def handle_path(path):
     '''
     all_results = {}
     for root, dirs, files in os.walk(path):
+        # Skip all folders which contain the string `liuming` since they have a
+        # different data format.
+        if 'liuming' in root:
+            continue
+
         if len(dirs) == 0:
             LOGGER.info('Found a leaf at `%s`.', root)
             try:
