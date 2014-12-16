@@ -11,6 +11,8 @@ Plots of data sets.
 from __future__ import division, absolute_import, print_function, \
     unicode_literals
 
+import logging
+
 import matplotlib.backends.backend_agg
 import matplotlib.figure
 import numpy as np
@@ -18,6 +20,9 @@ import numpy as np
 import correlators.bootstrap
 import correlators.fit
 import correlators.transform
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def plot_correlator(sets, name, shift, offset=False):
@@ -42,11 +47,14 @@ def plot_correlator(sets, name, shift, offset=False):
     else:
         fit_func = correlators.fit.cosh_fit_decorator(shift)
 
-    p = correlators.fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
-                                     folded_err, omit_pre=13, p0=p0,
-                                     fit_param=fit_param, used_param=used_param,
-                                     data_param=data_param)
-    print('Fit parameters folded (mass, amplitude, offset:', p)
+    try:
+        p = correlators.fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
+                                         folded_err, omit_pre=13, p0=p0,
+                                         fit_param=fit_param, used_param=used_param,
+                                         data_param=data_param)
+        print('Fit parameters folded (mass, amplitude, offset:', p)
+    except ValueError as e:
+        LOGGER.error('ValueError: %s', str(e))
 
     ax2.set_yscale('log')
     ax2.margins(0.05, tight=False)

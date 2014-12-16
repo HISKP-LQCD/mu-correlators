@@ -35,6 +35,11 @@ def handle_path(path):
 
     name = parameters['path'].replace('/', '__')
 
+    correlators.plot.plot_correlator(two_points, name+'_c2', shift)
+    correlators.plot.plot_correlator(four_points, name+'_c4', shift, offset=True)
+    correlators.plot.plot_effective_mass(two_points, name+'_c2')
+    correlators.plot.plot_effective_mass(four_points, name+'_c4')
+
     # Combine the two lists of data into one list of lists. That way the
     # configurations are grouped together.
     combined = zip(two_points, four_points)
@@ -56,11 +61,6 @@ def handle_path(path):
         r'amp_4': (val[5], err[5]),
         r'offset_4': (val[6], err[6]),
     }
-
-    correlators.plot.plot_correlator(two_points, name+'_c2', shift)
-    correlators.plot.plot_correlator(four_points, name+'_c4', shift, offset=True)
-    correlators.plot.plot_effective_mass(two_points, name+'_c2')
-    correlators.plot.plot_effective_mass(four_points, name+'_c4')
 
     return results
 
