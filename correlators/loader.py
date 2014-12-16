@@ -70,7 +70,12 @@ def folder_loader(path):
         m = FOUR_PATTERN.match(filename)
         if m:
             number = int(m.group(1))
-            four_points[number].append(data)
+            if number in four_points:
+                four_points[number].append(data)
+            else:
+                raise RuntimeError('Number {} is unexpected in `{}`.'.format(
+                    number, filename
+                ))
             continue
 
         raise RuntimeError('`{}` has unforseen format.'.format(filename))
