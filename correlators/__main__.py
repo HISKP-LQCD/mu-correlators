@@ -12,7 +12,8 @@ With the data from
 '''
 
 # I am used to Python 3, this enables some future features here in Python 2.
-from __future__ import division, absolute_import, print_function, unicode_literals
+from __future__ import division, absolute_import, print_function, \
+    unicode_literals
 
 import argparse
 
