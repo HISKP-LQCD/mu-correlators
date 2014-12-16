@@ -30,6 +30,11 @@ def handle_path(path):
 
         if len(dirs) == 0:
             LOGGER.info('Found a leaf at `%s`.', root)
+
+            if len(files) == 0:
+                LOGGER.warning('Empty directory as `%s`.', root)
+                continue
+
             try:
                 all_results[root] = correlators.analysis.handle_path(root)
             except RuntimeError as e:
