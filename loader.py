@@ -21,6 +21,17 @@ import numpy as np
 TWO_PATTERN = re.compile(r'C2_pi\+-_conf(\d{4}).dat')
 FOUR_PATTERN = re.compile(r'C4_(\d)_conf(\d{4}).dat')
 
+CONFIGURATION_PATTERN = re.compile(r'''
+                                   A100.24_
+                                   L24_
+                                   T48_
+                                   beta190_
+                                   mul0100_
+                                   musig150_
+                                   mudel190_
+                                   kappa1632550
+                                   ''', re.X)
+
 
 def folder_loader(path):
     '''
