@@ -4,7 +4,8 @@
 # Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
-from __future__ import division, absolute_import, print_function, unicode_literals
+from __future__ import division, absolute_import, print_function, \
+    unicode_literals
 
 import random
 
@@ -29,7 +30,7 @@ def average_and_std_arrays(arrays):
     total = np.column_stack(arrays)
 
     val = np.real(np.mean(total, axis=1))
-    err = np.real(np.std(total, axis=1)) #/ np.sqrt(len(arrays))
+    err = np.real(np.std(total, axis=1))
 
     return val, err
 
@@ -93,6 +94,7 @@ def generate_sample(elements):
         result.append(random.choice(elements))
 
     return result
+
 
 def average_combined_array(combined):
     '''

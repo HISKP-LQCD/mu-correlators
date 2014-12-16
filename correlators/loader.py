@@ -9,7 +9,8 @@ Helper functions to load the binary data that I was given from
 ``/hiskp2/correlators/``.
 '''
 
-from __future__ import division, absolute_import, print_function, unicode_literals
+from __future__ import division, absolute_import, print_function, \
+    unicode_literals
 
 import os
 import os.path
@@ -50,7 +51,11 @@ def folder_loader(path):
     if path_m:
         parameters = path_m.groupdict()
     else:
-        raise RuntimeError('Cannot parse parameters out of “{}”. Please check the regular expression in `loader.py` and/or give a complete path that includes all the parameters.'.format(path))
+        raise RuntimeError(
+            'Cannot parse parameters out of “{}”. Please check the regular '
+            'expression in `loader.py` and/or give a complete path that '
+            'includes all the parameters.'.format(path)
+        )
 
 
     for filename in sorted(os.listdir(path)):

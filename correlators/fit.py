@@ -4,11 +4,13 @@
 # Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
-from __future__ import division, absolute_import, print_function, unicode_literals
+from __future__ import division, absolute_import, print_function, \
+    unicode_literals
 
 import numpy as np
 import scipy.optimize as op
 import scipy.stats
+
 
 def _cut(x, y, yerr, omit_pre, omit_post):
     if omit_post == 0:
@@ -62,10 +64,12 @@ def fit_and_plot(axes, func, x, y, yerr=None, omit_pre=0, omit_post=0, p0=None,
                       marker='+', linestyle='none', color='red', alpha=0.3)
     axes_res.set_ylabel('Residual')
 
-    axes_res.plot([np.min(used_x), np.max(used_x)], [0, 0], color='red', alpha=0.2)
+    axes_res.plot([np.min(used_x), np.max(used_x)], [0, 0], color='red',
+                  alpha=0.2)
 
     dof = len(used_y) - len(popt) - 1
-    chisq, p = scipy.stats.chisquare(used_y, func(used_x, *popt), ddof=len(popt))
+    chisq, p = scipy.stats.chisquare(used_y, func(used_x, *popt),
+                                     ddof=len(popt))
 
     print('χ2:', chisq)
     print('χ2/DOF:', chisq/dof)

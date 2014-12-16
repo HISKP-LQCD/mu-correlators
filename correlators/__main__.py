@@ -71,7 +71,7 @@ def correlator_single_fit(params):
     val, err = params
     time = np.array(range(len(val)))
     p = correlators.fit.fit(correlators.fit.cosh_fit, time, val, err, omit_pre=13,
-                p0=[0.222, 700, 30, 0])
+                            p0=[0.222, 700, 30, 0])
     return p
 
 
@@ -84,9 +84,9 @@ def mass_difference(params):
 
     # Perform the fits.
     p2 = correlators.fit.fit(correlators.fit.cosh_fit, time, c2_val, c2_err, omit_pre=13,
-                p0=[0.222, 700, 30])
+                             p0=[0.222, 700, 30])
     p4 = correlators.fit.fit(correlators.fit.cosh_fit_offset, time, c4_val, c4_err, omit_pre=13,
-                p0=[0.222, 700, 30, 0])
+                             p0=[0.222, 700, 30, 0])
 
     m2 = p2[0]
     m4 = p4[0]
@@ -121,9 +121,9 @@ def plot_correlator(sets, name, offset=False):
         fit_func = correlators.fit.cosh_fit
 
     p = correlators.fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
-                         folded_err, omit_pre=13, p0=p0,
-                         fit_param=fit_param, used_param=used_param,
-                         data_param=data_param)
+                                     folded_err, omit_pre=13, p0=p0,
+                                     fit_param=fit_param, used_param=used_param,
+                                     data_param=data_param)
     print('Fit parameters folded (mass, amplitude, shift, offset:', p)
 
     ax2.set_yscale('log')
@@ -131,10 +131,7 @@ def plot_correlator(sets, name, offset=False):
     ax2.set_title('Folded Correlator')
     ax2.set_xlabel(r'$t/a$')
     ax2.set_ylabel(r'$\frac{1}{2} [C(t) + C(T-t)]$')
-    #ax2.legend(loc='best')
     ax2.grid(True)
-    #ax2.yaxis.tick_right()
-    #ax2.yaxis.set_label_position('right')
 
     fig_f.tight_layout()
     fig_f.savefig('{}_folded.pdf'.format(name))
@@ -149,15 +146,16 @@ def plot_effective_mass(sets, name):
     ax = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
 
-    ax.errorbar(time_cut, m_eff_val1, yerr=m_eff_err1, linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
+    ax.errorbar(time_cut, m_eff_val1, yerr=m_eff_err1, linestyle='none',
+                marker='+', label=r'$m_{\mathrm{eff}}$ pre')
     ax.set_title(r'Effective Mass $\operatorname{arcosh} ([C(t-1)+C(t+1)]/[2C(t)])$')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$m_\mathrm{eff}(t)$')
-    #ax.legend(loc='best')
     ax.grid(True)
     ax.margins(0.05, 0.05)
 
-    ax2.errorbar(time_cut[8:], m_eff_val1[8:], yerr=m_eff_err1[8:], linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
+    ax2.errorbar(time_cut[8:], m_eff_val1[8:], yerr=m_eff_err1[8:],
+                 linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
     ax2.errorbar([max(time_cut[8:])], [0.22293], [0.00035], marker='+')
     ax2.set_xlabel(r'$t/a$')
     ax2.set_ylabel(r'$m_\mathrm{eff}(t)$')
