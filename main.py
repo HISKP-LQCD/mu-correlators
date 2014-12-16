@@ -205,9 +205,9 @@ def main():
             print(name, string)
 
         plot_correlator(two_points, 'c2')
-        plot_correlator(four_points, 'c4')
+        plot_correlator(four_points, 'c4', offset=True)
         plot_effective_mass(two_points, 'c2')
-        plot_effective_mass(four_points, 'c4', offset=True)
+        plot_effective_mass(four_points, 'c4')
     else:
         sets = loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')
