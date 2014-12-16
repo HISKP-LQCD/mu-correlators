@@ -52,6 +52,9 @@ def handle_path(path):
         r'm_4': (val[1], err[1]),
         r'\Delta E': (val[2], err[2]),
         r'a_0': (val[3], err[3]),
+        r'amp_2': (val[4], err[4]),
+        r'amp_4': (val[5], err[5]),
+        r'offset_4': (val[6], err[6]),
     }
 
     correlators.plot.plot_correlator(two_points, name+'_c2', shift)
@@ -81,10 +84,15 @@ def mass_difference_decorator(shift):
         m2 = p2[0]
         m4 = p4[0]
 
+        amp2 = p2[1]
+        amp4 = p4[1]
+
+        offset = p4[2]
+
         delta_m = m4 - 2 * m2
 
         a0 = correlators.scatlen.compute_a0(m2, m4, 24)
 
-        return m2, m4, delta_m, a0
+        return m2, m4, delta_m, a0, amp2, amp4, offset
 
     return mass_difference
