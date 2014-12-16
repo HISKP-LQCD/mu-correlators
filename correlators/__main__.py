@@ -18,12 +18,12 @@ import argparse
 
 import matplotlib.pyplot as pl
 import numpy as np
-
-import bootstrap
-import fit
-import loader
-import scatlen
 import unitprint
+
+import correlators.bootstrap
+import correlators.fit
+import correlators.loader
+import correlators.scatlen
 
 
 def effective_mass(data, delta_t=1):
@@ -58,9 +58,9 @@ def effective_mass_cosh(val, dt=1):
 
 
 def fit_correlator(sets):
-    popt, perr = bootstrap.bootstrap_pre_transform(
+    popt, perr = correlators.bootstrap.bootstrap_pre_transform(
         correlator_single_fit, sets,
-        reduction=bootstrap.average_and_std_arrays,
+        reduction=correlators.bootstrap.average_and_std_arrays,
     )
     print(popt)
     print(perr)
@@ -70,7 +70,7 @@ def fit_correlator(sets):
 def correlator_single_fit(params):
     val, err = params
     time = np.array(range(len(val)))
-    p = fit.fit(fit.cosh_fit, time, val, err, omit_pre=13,
+    p = correlators.fit.fit(correlators.fit.cosh_fit, time, val, err, omit_pre=13,
                 p0=[0.222, 700, 30, 0])
     return p
 
@@ -83,9 +83,9 @@ def mass_difference(params):
     time = np.array(range(len(c2_val)))
 
     # Perform the fits.
-    p2 = fit.fit(fit.cosh_fit, time, c2_val, c2_err, omit_pre=13,
+    p2 = correlators.fit.fit(correlators.fit.cosh_fit, time, c2_val, c2_err, omit_pre=13,
                 p0=[0.222, 700, 30])
-    p4 = fit.fit(fit.cosh_fit_offset, time, c4_val, c4_err, omit_pre=13,
+    p4 = correlators.fit.fit(correlators.fit.cosh_fit_offset, time, c4_val, c4_err, omit_pre=13,
                 p0=[0.222, 700, 30, 0])
 
     m2 = p2[0]
@@ -93,12 +93,12 @@ def mass_difference(params):
 
     delta_m = m4 - 2 * m2
 
-    a0 = scatlen.compute_a0(m2, m4, 24)
+    a0 = correlators.scatlen.compute_a0(m2, m4, 24)
 
     return m2, m4, delta_m, a0
 
 def plot_correlator(sets, name, offset=False):
-    folded_val, folded_err = bootstrap.bootstrap_pre_transform(lambda x: x, sets)
+    folded_val, folded_err = correlators.bootstrap.bootstrap_pre_transform(lambda x: x, sets)
 
     time_folded = np.array(range(len(folded_val)))
 
@@ -114,12 +114,12 @@ def plot_correlator(sets, name, offset=False):
 
     p0 = [0.222, 700, 30]
     if offset:
-        fit_func = fit.cosh_fit_offset
+        fit_func = correlators.fit.cosh_fit_offset
         p0.append(0)
     else:
-        fit_func = fit.cosh_fit
+        fit_func = correlators.fit.cosh_fit
 
-    p = fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
+    p = correlators.fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
                          folded_err, omit_pre=13, p0=p0,
                          fit_param=fit_param, used_param=used_param,
                          data_param=data_param)
@@ -140,7 +140,7 @@ def plot_correlator(sets, name, offset=False):
 
 
 def plot_effective_mass(sets, name):
-    m_eff_val1, m_eff_err1 = bootstrap.bootstrap_pre_transform(effective_mass_cosh, sets)
+    m_eff_val1, m_eff_err1 = correlators.bootstrap.bootstrap_pre_transform(effective_mass_cosh, sets)
     time = np.arange(len(m_eff_val1)+2)
     time_cut = time[1:-1]
 
@@ -186,16 +186,16 @@ def main():
     options = _parse_args()
 
     if len(options.filename) == 1:
-        two_points, four_points = loader.folder_loader(options.filename[0])
+        two_points, four_points = correlators.loader.folder_loader(options.filename[0])
 
         # Combine the two lists of data into one list of lists. That way the
         # configurations are grouped together.
         combined = zip(two_points, four_points)
 
-        val, err = bootstrap.bootstrap_pre_transform(
+        val, err = correlators.bootstrap.bootstrap_pre_transform(
             mass_difference,
             combined,
-            bootstrap.average_combined_array,
+            correlators.bootstrap.average_combined_array,
         )
 
         for name, string in zip(
@@ -209,7 +209,7 @@ def main():
         plot_effective_mass(two_points, 'c2')
         plot_effective_mass(four_points, 'c4')
     else:
-        sets = loader.folded_list_loader(options.filename)
+        sets = correlators.loader.folded_list_loader(options.filename)
         print(len(sets), 'set loaded.')
 
         print('Plot correlators:')

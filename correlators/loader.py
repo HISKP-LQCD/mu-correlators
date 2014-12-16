@@ -48,7 +48,7 @@ def folder_loader(path):
 
     path_m = CONFIGURATION_PATTERN.search(path)
     if path_m:
-        groupdict = path_m.groupdict()
+        group_dict = path_m.groupdict()
     else:
         raise RuntimeError('Cannot parse parameters out of “{}”. Please check the regular expression in `loader.py` and/or give a complete path that includes all the parameters.'.format(path))
 
