@@ -13,7 +13,6 @@ from __future__ import division, absolute_import, print_function, \
 
 import logging
 
-import matplotlib.pyplot as pl
 import numpy as np
 
 import correlators.bootstrap

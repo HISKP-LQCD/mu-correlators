@@ -11,7 +11,8 @@ Plots of data sets.
 from __future__ import division, absolute_import, print_function, \
     unicode_literals
 
-import matplotlib.pyplot as pl
+import matplotlib.backends.backend_agg
+import matplotlib.figure
 import numpy as np
 
 import correlators.bootstrap
@@ -24,7 +25,7 @@ def plot_correlator(sets, name, shift, offset=False):
 
     time_folded = np.array(range(len(folded_val)))
 
-    fig_f = pl.figure()
+    fig_f = matplotlib.figure.Figure()
     ax2 = fig_f.add_subplot(1, 1, 1)
 
     ax2.errorbar(time_folded, folded_val, yerr=folded_err, linestyle='none',
@@ -54,8 +55,8 @@ def plot_correlator(sets, name, shift, offset=False):
     ax2.set_ylabel(r'$\frac{1}{2} [C(t) + C(T-t)]$')
     ax2.grid(True)
 
-    fig_f.tight_layout()
-    fig_f.savefig('{}_folded.pdf'.format(name))
+    canvas = matplotlib.backends.backend_agg.FigureCanvasAgg(fig_f)
+    canvas.print_figure('{}_folded.pdf'.format(name))
 
 
 def plot_effective_mass(sets, name):
@@ -65,7 +66,7 @@ def plot_effective_mass(sets, name):
     time = np.arange(len(m_eff_val1)+2)
     time_cut = time[1:-1]
 
-    fig = pl.figure()
+    fig = matplotlib.figure.Figure()
     ax = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
 
@@ -86,5 +87,5 @@ def plot_effective_mass(sets, name):
     ax2.legend(loc='best')
     ax2.margins(0.05, 0.05)
 
-    fig.tight_layout()
-    fig.savefig('{}_m_eff.pdf'.format(name))
+    canvas = matplotlib.backends.backend_agg.FigureCanvasAgg(fig)
+    canvas.print_figure('{}_m_eff.pdf'.format(name))
