@@ -72,7 +72,7 @@ def plot_effective_mass(sets, name):
 
     ax.errorbar(time_cut, m_eff_val1, yerr=m_eff_err1, linestyle='none',
                 marker='+', label=r'$m_{\mathrm{eff}}$ pre')
-    ax.set_title(r'Effective Mass $\operatorname{arcosh} ([C(t-1)+C(t+1)]/[2C(t)])$')
+    ax.set_title(r'Effective Mass $\cosh^{-1} ([C(t-1)+C(t+1)]/[2C(t)])$')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$m_\mathrm{eff}(t)$')
     ax.grid(True)
