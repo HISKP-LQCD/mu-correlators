@@ -55,10 +55,10 @@ def mass_difference(params):
     time = np.array(range(len(c2_val)))
 
     # Perform the fits.
-    p2 = correlators.fit.fit(correlators.fit.cosh_fit, time, c2_val, c2_err, omit_pre=13,
-                             p0=[0.222, 700, 30])
-    p4 = correlators.fit.fit(correlators.fit.cosh_fit_offset, time, c4_val, c4_err, omit_pre=13,
-                             p0=[0.222, 700, 30, 0])
+    p2 = correlators.fit.fit(correlators.fit.cosh_fit, time, c2_val, c2_err,
+                             omit_pre=13, p0=[0.222, 700, 30])
+    p4 = correlators.fit.fit(correlators.fit.cosh_fit_offset, time, c4_val,
+                             c4_err, omit_pre=13, p0=[0.222, 700, 30, 0])
 
     m2 = p2[0]
     m4 = p4[0]
