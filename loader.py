@@ -23,7 +23,7 @@ FOUR_PATTERN = re.compile(r'C4_(\d)_conf(\d{4}).dat')
 
 CONFIGURATION_PATTERN = re.compile(r'''
                                    (?P<type>[ABCD])
-                                   (?P<type2>[\d.]+)_
+                                   (?P<type2>[0-9.]+)_
                                    L(?P<L>\d+)_
                                    T(?P<T>\d+)_
                                    beta(?P<beta>\d+)_
@@ -45,6 +45,10 @@ def folder_loader(path):
         2: [],
         3: [],
     }
+
+    path_m = CONFIGURATION_PATTERN.search(path)
+    if path_m:
+        print(path_m.groupdict())
 
     for filename in sorted(os.listdir(path)):
         # Load and fold the data.
