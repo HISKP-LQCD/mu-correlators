@@ -97,6 +97,7 @@ def mass_difference(params):
 
     return m2, m4, delta_m, a0
 
+
 def plot_correlator(sets, name, offset=False):
     folded_val, folded_err = correlators.bootstrap.bootstrap_pre_transform(lambda x: x, sets)
 
