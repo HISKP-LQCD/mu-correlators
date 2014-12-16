@@ -54,8 +54,13 @@ def present_result_dict(result):
     for path, quantities in result.iteritems():
         print(path)
         print()
+        print('{:_^15s}  {:_^15s}  {:_^15s}  {:_^20s}'.format(
+            'Name', 'Value', 'Error', 'Value+Error'
+        ))
         for name, (val, err) in quantities.iteritems():
-            print(name, val, err, unitprint.siunitx(val, err))
+            print('{:15s}  {:15g}  {:15g}  {:^20s}'.format(
+                name, val, err, unitprint.siunitx(val, err)
+            ))
         print()
 
 
