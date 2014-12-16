@@ -71,7 +71,7 @@ def plot_effective_mass(sets, name):
     ax2 = fig.add_subplot(2, 1, 2)
 
     ax.errorbar(time_cut, m_eff_val1, yerr=m_eff_err1, linestyle='none',
-                marker='+', label=r'$m_{\mathrm{eff}}$ pre')
+                marker='+')
     ax.set_title(r'Effective Mass $\cosh^{-1} ([C(t-1)+C(t+1)]/[2C(t)])$')
     ax.set_xlabel(r'$t/a$')
     ax.set_ylabel(r'$m_\mathrm{eff}(t)$')
@@ -79,12 +79,11 @@ def plot_effective_mass(sets, name):
     ax.margins(0.05, 0.05)
 
     ax2.errorbar(time_cut[8:], m_eff_val1[8:], yerr=m_eff_err1[8:],
-                 linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
-    ax2.errorbar([max(time_cut[8:])], [0.22293], [0.00035], marker='+')
+                 linestyle='none', marker='+')
+    # ax2.errorbar([max(time_cut[8:])], [0.22293], [0.00035], marker='+')
     ax2.set_xlabel(r'$t/a$')
     ax2.set_ylabel(r'$m_\mathrm{eff}(t)$')
     ax2.grid(True)
-    ax2.legend(loc='best')
     ax2.margins(0.05, 0.05)
 
     canvas = matplotlib.backends.backend_agg.FigureCanvasAgg(fig)
