@@ -22,6 +22,7 @@ import numpy as np
 import bootstrap
 import fit
 import loader
+import scatlen
 import unitprint
 
 
@@ -92,7 +93,9 @@ def mass_difference(params):
 
     delta_m = m4 - 2 * m2
 
-    return m2, m4, delta_m
+    a0 = scatlen.compute_a0(m2, m4, 24)
+
+    return m2, m4, delta_m, a0
 
 def plot_correlator(sets, name, offset=False):
     folded_val, folded_err = bootstrap.bootstrap_pre_transform(lambda x: x, sets)
@@ -196,7 +199,7 @@ def main():
         )
 
         for name, string in zip(
-            ['m₂', 'm₄', 'ΔE'],
+            ['m₂', 'm₄', 'ΔE', 'a₀'],
             unitprint.siunitx(val, err),
         ):
             print(name, string)
