@@ -37,8 +37,12 @@ def handle_path(path):
     # configurations are grouped together.
     combined = zip(two_points, four_points)
 
+    shift = int(parameters['T'])
+
+    LOGGER.info('Shift is %d.', shift)
+
     val, err = correlators.bootstrap.bootstrap_pre_transform(
-        mass_difference,
+        mass_difference_decorator(shift),
         combined,
         correlators.bootstrap.average_combined_array,
     )
@@ -58,24 +62,29 @@ def handle_path(path):
     return results
 
 
-def mass_difference(params):
-    # Unpack all the arguments from the list.
-    (c2_val, c2_err), (c4_val, c4_err) = params
+def mass_difference_decorator(shift):
+    def mass_difference(params):
+        # Unpack all the arguments from the list.
+        (c2_val, c2_err), (c4_val, c4_err) = params
 
-    # Generate a single time, they are all the same.
-    time = np.array(range(len(c2_val)))
+        # Generate a single time, they are all the same.
+        time = np.array(range(len(c2_val)))
 
-    # Perform the fits.
-    p2 = correlators.fit.fit(correlators.fit.cosh_fit, time, c2_val, c2_err,
-                             omit_pre=13, p0=[0.222, 700, 30])
-    p4 = correlators.fit.fit(correlators.fit.cosh_fit_offset, time, c4_val,
-                             c4_err, omit_pre=13, p0=[0.222, 700, 30, 0])
+        # Perform the fits.
+        fit2 = correlators.fit.cosh_fit_decorator(shift)
+        p2 = correlators.fit.fit(fit2, time, c2_val, c2_err,
+                                 omit_pre=13, p0=[0.222, c2_val[0]])
+        fit4 = correlators.fit.cosh_fit_offset_decorator(shift)
+        p4 = correlators.fit.fit(fit4, time, c4_val,
+                                 c4_err, omit_pre=13, p0=[0.222, c2_val[0], 0])
 
-    m2 = p2[0]
-    m4 = p4[0]
+        m2 = p2[0]
+        m4 = p4[0]
 
-    delta_m = m4 - 2 * m2
+        delta_m = m4 - 2 * m2
 
-    a0 = correlators.scatlen.compute_a0(m2, m4, 24)
+        a0 = correlators.scatlen.compute_a0(m2, m4, 24)
 
-    return m2, m4, delta_m, a0
+        return m2, m4, delta_m, a0
+
+    return mass_difference
