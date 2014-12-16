@@ -49,9 +49,9 @@ def present_result_dict(result):
     print()
     print('Results')
     print('=======')
-    print()
 
     for path, quantities in result.iteritems():
+        print()
         print(path)
         print()
         print('{:_^15s}  {:_^15s}  {:_^15s}  {:_^20s}'.format(
@@ -61,7 +61,6 @@ def present_result_dict(result):
             print('{:15s}  {:15g}  {:15g}  {:^20s}'.format(
                 name, val, err, unitprint.siunitx(val, err)
             ))
-        print()
 
 
 def _parse_args():
