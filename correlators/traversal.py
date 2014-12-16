@@ -27,6 +27,7 @@ def handle_path(path):
         if 'liuming' in root:
             continue
 
+
         if len(dirs) == 0:
             LOGGER.info('Found a leaf at `%s`.', root)
             try:
@@ -35,5 +36,8 @@ def handle_path(path):
                 LOGGER.error(str(e))
             except ValueError as e:
                 LOGGER.error(str(e))
+
+        else:
+            dirs.sort()
 
     return all_results
