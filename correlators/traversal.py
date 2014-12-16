@@ -27,7 +27,6 @@ def handle_path(path):
         if 'liuming' in root:
             continue
 
-
         if len(dirs) == 0:
             LOGGER.info('Found a leaf at `%s`.', root)
 
