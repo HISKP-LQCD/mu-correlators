@@ -73,6 +73,8 @@ def folder_loader(path):
             four_points[number].append(data)
             continue
 
+        raise RuntimeError('`{}` has unforseen format.'.format(filename))
+
     four_point = [
         c1 + c2 - 2 * c3
         for c1, c2, c3 in zip(four_points[1], four_points[2], four_points[3])
