@@ -48,7 +48,7 @@ def folder_loader(path):
 
     path_m = CONFIGURATION_PATTERN.search(path)
     if path_m:
-        group_dict = path_m.groupdict()
+        parameters = path_m.groupdict()
     else:
         raise RuntimeError('Cannot parse parameters out of “{}”. Please check the regular expression in `loader.py` and/or give a complete path that includes all the parameters.'.format(path))
 
@@ -73,7 +73,7 @@ def folder_loader(path):
         for c1, c2, c3 in zip(four_points[1], four_points[2], four_points[3])
     ]
 
-    return two_points, four_point, group_dict
+    return two_points, four_point, parameters
 
 
 def correlator_loader(filename):

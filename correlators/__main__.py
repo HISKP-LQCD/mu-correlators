@@ -186,7 +186,7 @@ def main():
     options = _parse_args()
 
     if len(options.filename) == 1:
-        two_points, four_points = correlators.loader.folder_loader(options.filename[0])
+        two_points, four_points, parameters = correlators.loader.folder_loader(options.filename[0])
 
         # Combine the two lists of data into one list of lists. That way the
         # configurations are grouped together.
