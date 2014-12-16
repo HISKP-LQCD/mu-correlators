@@ -24,6 +24,7 @@ import correlators.bootstrap
 import correlators.fit
 import correlators.loader
 import correlators.scatlen
+import correlators.traversal
 
 
 def effective_mass(data, delta_t=1):
@@ -175,14 +176,20 @@ def _parse_args():
     :rtype: Namespace
     '''
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('filename', nargs='+')
+    parser.add_argument('path', nargs='+')
     options = parser.parse_args()
 
     return options
 
 
+
 def main():
     options = _parse_args()
+
+    for path in options.path:
+        correlators.traversal.handle_path(path)
+
+    sys.exit(0)
 
     if len(options.filename) == 1:
         two_points, four_points, parameters = correlators.loader.folder_loader(options.filename[0])
@@ -207,18 +214,6 @@ def main():
         plot_correlator(four_points, 'c4', offset=True)
         plot_effective_mass(two_points, 'c2')
         plot_effective_mass(four_points, 'c4')
-    else:
-        sets = correlators.loader.folded_list_loader(options.filename)
-        print(len(sets), 'set loaded.')
-
-        print('Plot correlators:')
-        plot_correlator(sets, 'c2-single')
-
-        print('Fit correlators:')
-        fit_correlator(sets)
-
-        print('Effective mass:')
-        plot_effective_mass(sets, 'c2-single')
 
 
 if __name__ == '__main__':
