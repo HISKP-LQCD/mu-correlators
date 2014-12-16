@@ -25,6 +25,7 @@ def handle_path(path):
         # Skip all folders which contain the string `liuming` since they have a
         # different data format.
         if 'liuming' in root:
+            del dirs[:]
             continue
 
         if len(dirs) == 0:

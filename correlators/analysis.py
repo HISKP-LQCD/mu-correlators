@@ -19,6 +19,7 @@ import numpy as np
 import correlators.bootstrap
 import correlators.fit
 import correlators.loader
+import correlators.plot
 import correlators.scatlen
 import correlators.transform
 
@@ -32,6 +33,8 @@ def handle_path(path):
     '''
     LOGGER.info('Working on path `%s`.', path)
     two_points, four_points, parameters = correlators.loader.folder_loader(path)
+
+    name = parameters['all']
 
     # Combine the two lists of data into one list of lists. That way the
     # configurations are grouped together.
@@ -54,10 +57,10 @@ def handle_path(path):
         r'a_0': (val[3], err[3]),
     }
 
-    #plot_correlator(two_points, 'c2')
-    #plot_correlator(four_points, 'c4', offset=True)
-    #plot_effective_mass(two_points, 'c2')
-    #plot_effective_mass(four_points, 'c4')
+    correlators.plot.plot_correlator(two_points, name+'_c2', shift)
+    correlators.plot.plot_correlator(four_points, name+'_c4', shift, offset=True)
+    correlators.plot.plot_effective_mass(two_points, name+'_c2')
+    correlators.plot.plot_effective_mass(four_points, name+'_c4')
 
     return results
 

@@ -19,7 +19,7 @@ import correlators.fit
 import correlators.transform
 
 
-def plot_correlator(sets, name, offset=False):
+def plot_correlator(sets, name, shift, offset=False):
     folded_val, folded_err = correlators.bootstrap.bootstrap_pre_transform(lambda x: x, sets)
 
     time_folded = np.array(range(len(folded_val)))
@@ -34,18 +34,18 @@ def plot_correlator(sets, name, offset=False):
     used_param = {'color': 'blue'}
     data_param = {'color': 'black'}
 
-    p0 = [0.222, 700, 30]
+    p0 = [0.222, 700]
     if offset:
-        fit_func = correlators.fit.cosh_fit_offset
+        fit_func = correlators.fit.cosh_fit_offset_decorator(shift)
         p0.append(0)
     else:
-        fit_func = correlators.fit.cosh_fit
+        fit_func = correlators.fit.cosh_fit_decorator(shift)
 
     p = correlators.fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
                                      folded_err, omit_pre=13, p0=p0,
                                      fit_param=fit_param, used_param=used_param,
                                      data_param=data_param)
-    print('Fit parameters folded (mass, amplitude, shift, offset:', p)
+    print('Fit parameters folded (mass, amplitude, offset:', p)
 
     ax2.set_yscale('log')
     ax2.margins(0.05, tight=False)
