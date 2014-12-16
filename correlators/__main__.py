@@ -16,129 +16,47 @@ from __future__ import division, absolute_import, print_function, \
     unicode_literals
 
 import argparse
+import logging
 
-import matplotlib.pyplot as pl
-import numpy as np
 import unitprint
 
-import correlators.bootstrap
-import correlators.fit
-import correlators.loader
-import correlators.scatlen
-import correlators.transform
 import correlators.traversal
 
 
-def fit_correlator(sets):
-    popt, perr = correlators.bootstrap.bootstrap_pre_transform(
-        correlator_single_fit, sets,
-        reduction=correlators.bootstrap.average_and_std_arrays,
-    )
-    print(popt)
-    print(perr)
-    print(unitprint.siunitx(popt, perr))
+def main():
+    options = _parse_args()
+
+    logging.basicConfig(level=logging.INFO)
+
+    result_dicts = []
+
+    for path in options.path:
+        result = correlators.traversal.handle_path(path)
+        result_dicts.append(result)
+
+    result_dict = reduce(merge_dicts, result_dicts)
+    present_result_dict(result_dict)
 
 
-def correlator_single_fit(params):
-    val, err = params
-    time = np.array(range(len(val)))
-    p = correlators.fit.fit(correlators.fit.cosh_fit, time, val, err, omit_pre=13,
-                            p0=[0.222, 700, 30, 0])
-    return p
+def merge_dicts(a, b):
+    """
+    From: http://stackoverflow.com/a/38990
+    """
+    return dict(a.items() + b.items())
 
 
-def mass_difference(params):
-    # Unpack all the arguments from the list.
-    (c2_val, c2_err), (c4_val, c4_err) = params
+def present_result_dict(result):
+    print()
+    print('Results')
+    print('=======')
+    print()
 
-    # Generate a single time, they are all the same.
-    time = np.array(range(len(c2_val)))
-
-    # Perform the fits.
-    p2 = correlators.fit.fit(correlators.fit.cosh_fit, time, c2_val, c2_err,
-                             omit_pre=13, p0=[0.222, 700, 30])
-    p4 = correlators.fit.fit(correlators.fit.cosh_fit_offset, time, c4_val,
-                             c4_err, omit_pre=13, p0=[0.222, 700, 30, 0])
-
-    m2 = p2[0]
-    m4 = p4[0]
-
-    delta_m = m4 - 2 * m2
-
-    a0 = correlators.scatlen.compute_a0(m2, m4, 24)
-
-    return m2, m4, delta_m, a0
-
-
-def plot_correlator(sets, name, offset=False):
-    folded_val, folded_err = correlators.bootstrap.bootstrap_pre_transform(lambda x: x, sets)
-
-    time_folded = np.array(range(len(folded_val)))
-
-    fig_f = pl.figure()
-    ax2 = fig_f.add_subplot(1, 1, 1)
-
-    ax2.errorbar(time_folded, folded_val, yerr=folded_err, linestyle='none',
-                 marker='+', label='folded')
-
-    fit_param = {'color': 'gray'}
-    used_param = {'color': 'blue'}
-    data_param = {'color': 'black'}
-
-    p0 = [0.222, 700, 30]
-    if offset:
-        fit_func = correlators.fit.cosh_fit_offset
-        p0.append(0)
-    else:
-        fit_func = correlators.fit.cosh_fit
-
-    p = correlators.fit.fit_and_plot(ax2, fit_func, time_folded, folded_val,
-                                     folded_err, omit_pre=13, p0=p0,
-                                     fit_param=fit_param, used_param=used_param,
-                                     data_param=data_param)
-    print('Fit parameters folded (mass, amplitude, shift, offset:', p)
-
-    ax2.set_yscale('log')
-    ax2.margins(0.05, tight=False)
-    ax2.set_title('Folded Correlator')
-    ax2.set_xlabel(r'$t/a$')
-    ax2.set_ylabel(r'$\frac{1}{2} [C(t) + C(T-t)]$')
-    ax2.grid(True)
-
-    fig_f.tight_layout()
-    fig_f.savefig('{}_folded.pdf'.format(name))
-
-
-def plot_effective_mass(sets, name):
-    m_eff_val1, m_eff_err1 = correlators.bootstrap.bootstrap_pre_transform(
-        correlators.transform.effective_mass_cosh, sets
-    )
-    time = np.arange(len(m_eff_val1)+2)
-    time_cut = time[1:-1]
-
-    fig = pl.figure()
-    ax = fig.add_subplot(2, 1, 1)
-    ax2 = fig.add_subplot(2, 1, 2)
-
-    ax.errorbar(time_cut, m_eff_val1, yerr=m_eff_err1, linestyle='none',
-                marker='+', label=r'$m_{\mathrm{eff}}$ pre')
-    ax.set_title(r'Effective Mass $\operatorname{arcosh} ([C(t-1)+C(t+1)]/[2C(t)])$')
-    ax.set_xlabel(r'$t/a$')
-    ax.set_ylabel(r'$m_\mathrm{eff}(t)$')
-    ax.grid(True)
-    ax.margins(0.05, 0.05)
-
-    ax2.errorbar(time_cut[8:], m_eff_val1[8:], yerr=m_eff_err1[8:],
-                 linestyle='none', marker='+', label=r'$m_{\mathrm{eff}}$ pre')
-    ax2.errorbar([max(time_cut[8:])], [0.22293], [0.00035], marker='+')
-    ax2.set_xlabel(r'$t/a$')
-    ax2.set_ylabel(r'$m_\mathrm{eff}(t)$')
-    ax2.grid(True)
-    ax2.legend(loc='best')
-    ax2.margins(0.05, 0.05)
-
-    fig.tight_layout()
-    fig.savefig('{}_m_eff.pdf'.format(name))
+    for path, quantities in result.iteritems():
+        print(path)
+        print()
+        for name, (val, err) in quantities.iteritems():
+            print(name, val, err, unitprint.siunitx(val, err))
+        print()
 
 
 def _parse_args():
@@ -153,40 +71,6 @@ def _parse_args():
     options = parser.parse_args()
 
     return options
-
-
-
-def main():
-    options = _parse_args()
-
-    for path in options.path:
-        correlators.traversal.handle_path(path)
-
-    sys.exit(0)
-
-    if len(options.filename) == 1:
-        two_points, four_points, parameters = correlators.loader.folder_loader(options.filename[0])
-
-        # Combine the two lists of data into one list of lists. That way the
-        # configurations are grouped together.
-        combined = zip(two_points, four_points)
-
-        val, err = correlators.bootstrap.bootstrap_pre_transform(
-            mass_difference,
-            combined,
-            correlators.bootstrap.average_combined_array,
-        )
-
-        for name, string in zip(
-            ['m₂', 'm₄', 'ΔE', 'a₀'],
-            unitprint.siunitx(val, err),
-        ):
-            print(name, string)
-
-        plot_correlator(two_points, 'c2')
-        plot_correlator(four_points, 'c4', offset=True)
-        plot_effective_mass(two_points, 'c2')
-        plot_effective_mass(four_points, 'c4')
 
 
 if __name__ == '__main__':

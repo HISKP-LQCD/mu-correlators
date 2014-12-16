@@ -7,20 +7,26 @@
 from __future__ import division, absolute_import, print_function, \
     unicode_literals
 
+import logging
 import os
+
+import correlators.analysis
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def handle_path(path):
     '''
     Performs the analysis of every folder below the given path.
     '''
+    all_results = {}
     for root, dirs, files in os.walk(path):
         if len(dirs) == 0:
-            print('Found a leaf at', root)
-            _handle_leaf(path)
+            LOGGER.info('Found a leaf at `%s`.', root)
+            try:
+                all_results[root] = correlators.analysis.handle_path(root)
+            except RuntimeError as e:
+                LOGGER.error(str(e))
 
-def _handle_leaf(path):
-    '''
-    Performs the analysis of all the files in the given folder.
-    '''
-
+    return all_results
