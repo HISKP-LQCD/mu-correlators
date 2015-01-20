@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2014-2015 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
 """
@@ -93,6 +93,6 @@ def mass_difference_decorator(shift):
 
         a0 = correlators.scatlen.compute_a0(m2, m4, 24)
 
-        return m2, m4, delta_m, a0, amp2, amp4, offset
+        return m2, m4, delta_m, a0, amp2, amp4, offset, a0*m2, m2**2
 
     return mass_difference
