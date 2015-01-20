@@ -39,6 +39,10 @@ def main():
     plot_results(result.T)
 
 
+def leading_order(x):
+    return - (x / (4 * np.pi))**2
+
+
 def plot_results(result):
     fig = pl.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -46,6 +50,15 @@ def plot_results(result):
     ax.errorbar(result['m_pi/f_pi_val'], result['a0*m2_val'],
                 xerr=result['m_pi/f_pi_err'], yerr=result['a0*m2_err'],
                 linestyle='none', marker='+')
+
+    lo_x = np.linspace(
+        np.min(result['m_pi/f_pi_val']),
+        np.max(result['m_pi/f_pi_val']),
+        1000
+    )
+    lo_y = leading_order(lo_x)
+    ax.plot(lo_x, lo_y)
+
     ax.margins(0.05, 0.05)
     ax.set_xlabel(r'$m_\pi / f_\pi$')
     ax.set_ylabel(r'$m_\pi a_0$')
@@ -53,8 +66,6 @@ def plot_results(result):
 
     fig.tight_layout()
     fig.savefig('result.pdf')
-
-
 
 
 def _parse_args():
