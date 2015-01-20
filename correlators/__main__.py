@@ -62,10 +62,16 @@ def plot_results(result):
     fig = pl.figure()
     ax = fig.add_subplot(1, 1, 1)
 
+    result = result.sort('L')
+
+    color_iter = iter(COLORMAPPER_9)
     for ensemble, data in result.T.iteritems():
-        ax.errorbar(data['m_pi/f_pi_val'], data['a0*m2_val'],
-                    xerr=data['m_pi/f_pi_err'], yerr=data['a0*m2_err'],
-                    linestyle='none', marker='+', label=data[0])
+        ax.errorbar(
+            data['m_pi/f_pi_val'], data['a0*m2_val'],
+            xerr=data['m_pi/f_pi_err'], yerr=data['a0*m2_err'],
+            linestyle='none', marker='+', label=data[0],
+            #color=next(color_iter),
+        )
 
     lo_x = np.linspace(
         np.min(result['m_pi/f_pi_val']),
