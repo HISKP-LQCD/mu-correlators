@@ -119,6 +119,7 @@ def handle_path(path):
             m_pi_f_pi_val,
             m_pi_f_pi_err,
             parameters['L'],
+            parameters['T'],
         ],
         index=[
             'm_2_val',
@@ -142,6 +143,7 @@ def handle_path(path):
             'm_pi/f_pi_val',
             'm_pi/f_pi_err',
             'L',
+            'T',
         ]
     )
 
