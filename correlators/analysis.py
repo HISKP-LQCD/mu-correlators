@@ -63,6 +63,7 @@ ENSENBLE_DATA = {
         'm_pi/f_pi_err' : 0.0,
     },
 }
+'List of ensembles used in arXiv:1412.0408v1'
 
 
 def handle_path(path):
