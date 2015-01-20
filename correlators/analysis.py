@@ -95,28 +95,6 @@ def handle_path(path):
         combined,
         correlators.bootstrap.average_combined_array,
     )
-    results = {
-        'm_2_val': val[0],
-        'm_2_err': err[0],
-        'm_4_val': val[1],
-        'm_4_err': err[1],
-        'Delta E_val': val[2],
-        'Delta E_err': err[2],
-        'a_0_val': val[3],
-        'a_0_err': err[3],
-        'amp_2_val': val[4],
-        'amp_2_err': err[4],
-        'amp_4_val': val[5],
-        'amp_4_err': err[5],
-        'offset_4_val': val[6],
-        'offset_4_err': err[6],
-        'a0*m2_val': val[7],
-        'a0*m2_err': err[7],
-        'm2**2_val': val[8],
-        'm2**2_err': err[8],
-        'm_pi/f_pi_val': m_pi_f_pi_val,
-        'm_pi/f_pi_err': m_pi_f_pi_err,
-    }
 
     series = pd.Series(
         [
@@ -140,6 +118,7 @@ def handle_path(path):
             err[8],
             m_pi_f_pi_val,
             m_pi_f_pi_err,
+            parameters['L'],
         ],
         index=[
             'm_2_val',
@@ -162,6 +141,7 @@ def handle_path(path):
             'm2**2_err',
             'm_pi/f_pi_val',
             'm_pi/f_pi_err',
+            'L',
         ]
     )
 
