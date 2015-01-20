@@ -10,6 +10,8 @@ from __future__ import division, absolute_import, print_function, \
 import logging
 import os
 
+import pandas as pd
+
 import correlators.analysis
 
 
@@ -20,7 +22,7 @@ def handle_path(path):
     '''
     Performs the analysis of every folder below the given path.
     '''
-    all_results = {}
+    all_results = pd.DataFrame()
     for root, dirs, files in os.walk(path):
         # Skip all folders which contain the string `liuming` since they have a
         # different data format.
@@ -37,7 +39,8 @@ def handle_path(path):
 
             try:
                 abspath = os.path.abspath(root)
-                all_results[abspath] = correlators.analysis.handle_path(root)
+                ensemble, results = correlators.analysis.handle_path(root)
+                all_results[ensemble] = results
             except RuntimeError as e:
                 LOGGER.error('RuntimeError: %s', str(e))
             except ValueError as e:
@@ -45,5 +48,7 @@ def handle_path(path):
 
         else:
             dirs.sort()
+
+    print(all_results.T)
 
     return all_results
