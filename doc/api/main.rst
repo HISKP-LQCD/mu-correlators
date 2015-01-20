@@ -4,6 +4,10 @@
 main
 ####
 
-.. automodule:: main
+.. automodule:: correlators
+    :members:
+    :undoc-members:
+
+.. automodule:: correlators.loader
     :members:
     :undoc-members:
