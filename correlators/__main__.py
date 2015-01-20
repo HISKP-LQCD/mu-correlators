@@ -20,6 +20,7 @@ import logging
 
 import matplotlib.pyplot as pl
 import numpy as np
+import pandas as pd
 
 import correlators.traversal
 import unitprint
@@ -30,13 +31,14 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
 
-    result = correlators.traversal.handle_path(options.path)
+    if options.plot_only:
+        result = pd.read_csv('results.csv')
+    else:
+        result = correlators.traversal.handle_path(options.path).T
+        print(result)
+        result.to_csv('results.csv')
 
-    print(result.T)
-
-    result.T.to_csv('results.csv')
-
-    plot_results(result.T)
+    plot_results(result)
 
 
 def leading_order(x):
@@ -77,6 +79,7 @@ def _parse_args():
     '''
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('path')
+    parser.add_argument('--plot-only', action='store_true')
     options = parser.parse_args()
 
     return options
