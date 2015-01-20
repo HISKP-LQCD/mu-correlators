@@ -19,6 +19,7 @@ import argparse
 import logging
 
 import unitprint
+import matplotlib.pyplot as pl
 
 import correlators.traversal
 
@@ -36,6 +37,8 @@ def main():
 
     result_dict = reduce(merge_dicts, result_dicts)
     present_result_dict(result_dict)
+
+    plot_results(result)
 
 
 def merge_dicts(a, b):
@@ -57,10 +60,43 @@ def present_result_dict(result):
         print('{:_^15s}  {:_^15s}  {:_^15s}  {:_^20s}'.format(
             'Name', 'Value', 'Error', 'Value+Error'
         ))
-        for name, (val, err) in sorted(quantities.iteritems()):
-            print('{:15s}  {:15g}  {:15g}  {:^20s}'.format(
-                name, val, err, unitprint.siunitx(val, err)
-            ))
+        for name, item in sorted(quantities.iteritems()):
+            if isinstance(item, tuple):
+                val, err = item
+                print('{:15s}  {:15g}  {:15g}  {:^20s}'.format(
+                    name, val, err, unitprint.siunitx(val, err)
+                ))
+            else:
+                print('{:15s}  {:15}'.format(
+                    name, item,
+                ))
+
+
+def plot_results(result):
+    fig = pl.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    x = []
+    y = []
+    xerr = []
+    yerr = []
+
+    for q in result.itervalues():
+        x.append(q['m_pi/f_pi'][0])
+        y.append(q['a0*m2'][0])
+        xerr.append(q['m_pi/f_pi'][1])
+        yerr.append(q['a0*m2'][1])
+
+    ax.errorbar(x, y, xerr=xerr, yerr=yerr, linestyle='none', marker='+')
+    ax.margins(0.05, 0.05)
+    ax.set_xlabel(r'$m_\pi / f_\pi$')
+    ax.set_ylabel(r'$m_\pi \cdot a_0$')
+    ax.grid(True)
+
+    fig.tight_layout()
+    fig.savefig('result.pdf')
+
+
 
 
 def _parse_args():

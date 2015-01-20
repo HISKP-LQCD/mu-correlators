@@ -75,6 +75,9 @@ def handle_path(path):
 
     name = parameters['path'].replace('/', '__')
 
+    m_pi_f_pi_val = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_val']
+    m_pi_f_pi_err = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_err']
+
     shift = int(parameters['T'])
 
     correlators.plot.plot_correlator(two_points, name+'_c2', shift)
@@ -93,6 +96,7 @@ def handle_path(path):
     )
 
     results = {
+        r'ensemble': parameters['ensemble'],
         r'm_2': (val[0], err[0]),
         r'm_4': (val[1], err[1]),
         r'\Delta E': (val[2], err[2]),
@@ -102,6 +106,7 @@ def handle_path(path):
         r'offset_4': (val[6], err[6]),
         r'a0*m2': (val[7], err[7]),
         r'm2**2': (val[8], err[8]),
+        r'm_pi/f_pi': (m_pi_f_pi_val, m_pi_f_pi_err),
     }
 
     return results
