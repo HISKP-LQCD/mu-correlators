@@ -61,8 +61,7 @@ def main():
 
 
 def leading_order(x):
-    # return - (x / (4 * np.pi))**2
-    return - 0.0390625 * x**2
+    return - x**2 / (8 * np.pi)
 
 
 def plot_results(result):
@@ -87,7 +86,7 @@ def plot_results(result):
         1000
     )
     lo_y = leading_order(lo_x)
-    #ax.plot(lo_x, lo_y)
+    ax.plot(lo_x, lo_y)
 
     ax.margins(0.05, 0.05)
     ax.set_xlabel(r'$m_\pi / f_\pi$')
