@@ -13,6 +13,7 @@ from __future__ import division, absolute_import, print_function, \
 
 import logging
 
+import matplotlib.pyplot as pl
 import numpy as np
 import pandas as pd
 
@@ -90,11 +91,16 @@ def handle_path(path):
     # configurations are grouped together.
     combined = zip(two_points, four_points)
 
+    #fig = pl.figure()
+    #ax = fig.add_subplot(1, 1, 1)
+
     val, err = correlators.bootstrap.bootstrap_pre_transform(
         mass_difference_decorator(shift),
         combined,
         correlators.bootstrap.average_combined_array,
     )
+
+    #fig.savefig('newton_' + name + '.pdf')
 
     series = pd.Series(
         [
@@ -150,7 +156,7 @@ def handle_path(path):
     return parameters['ensemble'], series
 
 
-def mass_difference_decorator(shift):
+def mass_difference_decorator(shift, fig=None):
     def mass_difference(params):
         # Unpack all the arguments from the list.
         (c2_val, c2_err), (c4_val, c4_err) = params
@@ -176,7 +182,7 @@ def mass_difference_decorator(shift):
 
         delta_m = m4 - 2 * m2
 
-        a0 = correlators.scatlen.compute_a0(m2, m4, 24)
+        a0 = correlators.scatlen.compute_a0(m2, m4, 24, fig)
 
         return m2, m4, delta_m, a0, amp2, amp4, offset, a0*m2, m2**2
 

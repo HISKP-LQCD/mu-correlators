@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2014-2015 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
 from __future__ import division, absolute_import, print_function, unicode_literals
@@ -22,7 +22,13 @@ def a0_intercept_generator(m, w, l):
 
     return a0_intercept
 
-def compute_a0(m, w, l):
+def compute_a0(m, w, l, fig=None, x=np.linspace(-5, 5, 100)):
     a0_intercept = a0_intercept_generator(m, w, l)
+    a0 = op.newton(a0_intercept, 0)
 
-    return op.newton(a0_intercept, 0)
+    if fig is not None:
+        y = a0_intercept(x)
+        fig.plot(x, y, color='blue', alpha=0.5)
+        fig.plot([a0], [a0_intercept(a0)], linestyle='none', marker='.', color='black')
+
+    return a0
