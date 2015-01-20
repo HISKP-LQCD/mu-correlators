@@ -60,6 +60,8 @@ def handle_path(path):
         r'amp_2': (val[4], err[4]),
         r'amp_4': (val[5], err[5]),
         r'offset_4': (val[6], err[6]),
+        r'a0*m2': (val[7], err[7]),
+        r'm2**2': (val[8], err[8]),
     }
 
     return results
