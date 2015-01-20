@@ -18,10 +18,11 @@ from __future__ import division, absolute_import, print_function, \
 import argparse
 import logging
 
-import unitprint
 import matplotlib.pyplot as pl
+import numpy as np
 
 import correlators.traversal
+import unitprint
 
 
 def main():
@@ -86,6 +87,9 @@ def plot_results(result):
         y.append(q['a0*m2'][0])
         xerr.append(q['m_pi/f_pi'][1])
         yerr.append(q['a0*m2'][1])
+
+    plot_results = np.column_stack([x, y, xerr, yerr])
+    np.savetxt('results.txt', plot_results)
 
     ax.errorbar(x, y, xerr=xerr, yerr=yerr, linestyle='none', marker='+')
     ax.margins(0.05, 0.05)
