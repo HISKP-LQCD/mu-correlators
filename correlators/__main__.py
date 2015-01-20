@@ -42,7 +42,8 @@ def main():
 
 
 def leading_order(x):
-    return - (x / (4 * np.pi))**2
+    # return - (x / (4 * np.pi))**2
+    return - 0.0390625 * x**2
 
 
 def plot_results(result):
