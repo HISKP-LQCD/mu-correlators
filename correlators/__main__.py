@@ -18,6 +18,7 @@ from __future__ import division, absolute_import, print_function, \
 import argparse
 import logging
 
+import colorsys
 import matplotlib.pyplot as pl
 import numpy as np
 import pandas as pd
@@ -36,6 +37,12 @@ COLORMAPPER_9 = [
     '#f781bf',
     '#999999',
 ]
+
+def coloriter(n):
+    return iter([
+        colorsys.hsv_to_rgb(x*1.0/n, .9, .9)
+        for x in range(n)
+    ])
 
 
 def main():
@@ -62,15 +69,16 @@ def plot_results(result):
     fig = pl.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    result = result.sort('L')
+    result = result.sort(['L', 'm_pi/f_pi_val'], ascending=[False, True])
 
-    color_iter = iter(COLORMAPPER_9)
+    marker = iter(['*']*4 + ['^']*4 + ['o'])
+
+    color_iter = coloriter(9)
     for ensemble, data in result.T.iteritems():
         ax.errorbar(
             data['m_pi/f_pi_val'], data['a0*m2_val'],
             xerr=data['m_pi/f_pi_err'], yerr=data['a0*m2_err'],
-            linestyle='none', marker='+', label=data[0],
-            #color=next(color_iter),
+            linestyle='none', marker=next(marker), label=data[0],
         )
 
     lo_x = np.linspace(
@@ -79,7 +87,7 @@ def plot_results(result):
         1000
     )
     lo_y = leading_order(lo_x)
-    ax.plot(lo_x, lo_y)
+    #ax.plot(lo_x, lo_y)
 
     ax.margins(0.05, 0.05)
     ax.set_xlabel(r'$m_\pi / f_\pi$')
