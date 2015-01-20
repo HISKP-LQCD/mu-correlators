@@ -49,6 +49,4 @@ def handle_path(path):
         else:
             dirs.sort()
 
-    print(all_results.T)
-
     return all_results

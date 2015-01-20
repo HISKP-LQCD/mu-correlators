@@ -30,16 +30,13 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
 
-    result_dicts = []
+    result = correlators.traversal.handle_path(options.path)
 
-    for path in options.path:
-        result = correlators.traversal.handle_path(path)
-        result_dicts.append(result)
+    print(result.T)
 
-    result_dict = reduce(merge_dicts, result_dicts)
-    present_result_dict(result_dict)
+    result.T.to_csv('results.csv')
 
-    plot_results(result)
+    plot_results(result.T)
 
 
 def merge_dicts(a, b):
@@ -77,21 +74,9 @@ def plot_results(result):
     fig = pl.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    x = []
-    y = []
-    xerr = []
-    yerr = []
-
-    for q in result.itervalues():
-        x.append(q['m_pi/f_pi'][0])
-        y.append(q['a0*m2'][0])
-        xerr.append(q['m_pi/f_pi'][1])
-        yerr.append(q['a0*m2'][1])
-
-    plot_results = np.column_stack([x, y, xerr, yerr])
-    np.savetxt('results.txt', plot_results)
-
-    ax.errorbar(x, y, xerr=xerr, yerr=yerr, linestyle='none', marker='+')
+    ax.errorbar(result['m_pi/f_pi_val'], result['a0*m2_val'],
+                xerr=result['m_pi/f_pi_err'], yerr=result['a0*m2_err'],
+                linestyle='none', marker='+')
     ax.margins(0.05, 0.05)
     ax.set_xlabel(r'$m_\pi / f_\pi$')
     ax.set_ylabel(r'$m_\pi a_0$')
@@ -111,7 +96,7 @@ def _parse_args():
     :rtype: Namespace
     '''
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('path', nargs='+')
+    parser.add_argument('path')
     options = parser.parse_args()
 
     return options
