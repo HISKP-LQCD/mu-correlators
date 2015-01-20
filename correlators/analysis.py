@@ -118,11 +118,54 @@ def handle_path(path):
         'm_pi/f_pi_err': m_pi_f_pi_err,
     }
 
-    frame = pd.Series(results)
+    series = pd.Series(
+        [
+            val[0],
+            err[0],
+            val[1],
+            err[1],
+            val[2],
+            err[2],
+            val[3],
+            err[3],
+            val[4],
+            err[4],
+            val[5],
+            err[5],
+            val[6],
+            err[6],
+            val[7],
+            err[7],
+            val[8],
+            err[8],
+            m_pi_f_pi_val,
+            m_pi_f_pi_err,
+        ],
+        index=[
+            'm_2_val',
+            'm_2_err',
+            'm_4_val',
+            'm_4_err',
+            'Delta E_val',
+            'Delta E_err',
+            'a_0_val',
+            'a_0_err',
+            'amp_2_val',
+            'amp_2_err',
+            'amp_4_val',
+            'amp_4_err',
+            'offset_4_val',
+            'offset_4_err',
+            'a0*m2_val',
+            'a0*m2_err',
+            'm2**2_val',
+            'm2**2_err',
+            'm_pi/f_pi_val',
+            'm_pi/f_pi_err',
+        ]
+    )
 
-    print(frame)
-
-    return parameters['ensemble'], frame
+    return parameters['ensemble'], series
 
 
 def mass_difference_decorator(shift):
