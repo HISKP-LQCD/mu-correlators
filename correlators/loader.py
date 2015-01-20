@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2014-2015 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
 '''
@@ -25,8 +25,7 @@ FOUR_PATTERN = re.compile(r'C4_(\d)_conf(\d{4}).dat')
 CONFIGURATION_PATTERN = re.compile(r'''
                                    ^.*
                                    (?P<path>
-                                   (?P<type>[ABCD])
-                                   (?P<type2>[0-9.]+)_
+                                   (?P<ensemble>[ABCD][0-9.]+)_
                                    L(?P<L>\d+)_
                                    T(?P<T>\d+)_
                                    beta(?P<beta>\d+)_
