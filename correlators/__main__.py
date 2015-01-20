@@ -90,7 +90,7 @@ def plot_results(result):
     ax.errorbar(x, y, xerr=xerr, yerr=yerr, linestyle='none', marker='+')
     ax.margins(0.05, 0.05)
     ax.set_xlabel(r'$m_\pi / f_\pi$')
-    ax.set_ylabel(r'$m_\pi \cdot a_0$')
+    ax.set_ylabel(r'$m_\pi a_0$')
     ax.grid(True)
 
     fig.tight_layout()
