@@ -55,7 +55,7 @@ def folder_loader(path):
         parameters = path_m.groupdict()
     else:
         raise RuntimeError(
-            'Cannot parse parameters out of “{}”. Please check the regular '
+            'Cannot parse parameters out of "{}". Please check the regular '
             'expression in `loader.py` and/or give a complete path that '
             'includes all the parameters.'.format(path)
         )
