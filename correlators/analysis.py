@@ -80,10 +80,11 @@ def handle_path(path):
     m_pi_f_pi_val = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_val']
     m_pi_f_pi_err = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_err']
 
-    shift = int(parameters['T'])
+    T = int(parameters['T'])
+    L = int(parameters['L'])
 
-    correlators.plot.plot_correlator(two_points, name+'_c2', shift)
-    correlators.plot.plot_correlator(four_points, name+'_c4', shift, offset=True)
+    correlators.plot.plot_correlator(two_points, name+'_c2', T)
+    correlators.plot.plot_correlator(four_points, name+'_c4', T, offset=True)
     correlators.plot.plot_effective_mass(two_points, name+'_c2')
     correlators.plot.plot_effective_mass(four_points, name+'_c4')
 
@@ -95,7 +96,7 @@ def handle_path(path):
     #ax = fig.add_subplot(1, 1, 1)
 
     val, err = correlators.bootstrap.bootstrap_pre_transform(
-        mass_difference_decorator(shift),
+        mass_difference_decorator(T, L),
         combined,
         correlators.bootstrap.average_combined_array,
     )
@@ -156,7 +157,7 @@ def handle_path(path):
     return parameters['ensemble'], series
 
 
-def mass_difference_decorator(shift, fig=None):
+def mass_difference_decorator(T, L, fig=None):
     def mass_difference(params):
         # Unpack all the arguments from the list.
         (c2_val, c2_err), (c4_val, c4_err) = params
@@ -165,10 +166,10 @@ def mass_difference_decorator(shift, fig=None):
         time = np.array(range(len(c2_val)))
 
         # Perform the fits.
-        fit2 = correlators.fit.cosh_fit_decorator(shift)
+        fit2 = correlators.fit.cosh_fit_decorator(T)
         p2 = correlators.fit.fit(fit2, time, c2_val, c2_err,
                                  omit_pre=13, p0=[0.222, c2_val[0]])
-        fit4 = correlators.fit.cosh_fit_offset_decorator(shift)
+        fit4 = correlators.fit.cosh_fit_offset_decorator(T)
         p4 = correlators.fit.fit(fit4, time, c4_val,
                                  c4_err, omit_pre=13, p0=[0.45, c2_val[0], 0])
 
@@ -182,7 +183,7 @@ def mass_difference_decorator(shift, fig=None):
 
         delta_m = m4 - 2 * m2
 
-        a0 = correlators.scatlen.compute_a0(m2, m4, 24, fig)
+        a0 = correlators.scatlen.compute_a0(m2, m4, L, fig)
 
         return m2, m4, delta_m, a0, amp2, amp4, offset, a0*m2, m2**2
 
