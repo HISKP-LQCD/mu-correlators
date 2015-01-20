@@ -39,37 +39,6 @@ def main():
     plot_results(result.T)
 
 
-def merge_dicts(a, b):
-    """
-    From: http://stackoverflow.com/a/38990
-    """
-    return dict(a.items() + b.items())
-
-
-def present_result_dict(result):
-    print()
-    print('Results')
-    print('=======')
-
-    for path, quantities in sorted(result.iteritems()):
-        print()
-        print(path)
-        print()
-        print('{:_^15s}  {:_^15s}  {:_^15s}  {:_^20s}'.format(
-            'Name', 'Value', 'Error', 'Value+Error'
-        ))
-        for name, item in sorted(quantities.iteritems()):
-            if isinstance(item, tuple):
-                val, err = item
-                print('{:15s}  {:15g}  {:15g}  {:^20s}'.format(
-                    name, val, err, unitprint.siunitx(val, err)
-                ))
-            else:
-                print('{:15s}  {:15}'.format(
-                    name, item,
-                ))
-
-
 def plot_results(result):
     fig = pl.figure()
     ax = fig.add_subplot(1, 1, 1)
