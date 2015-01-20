@@ -50,9 +50,10 @@ def plot_results(result):
     fig = pl.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.errorbar(result['m_pi/f_pi_val'], result['a0*m2_val'],
-                xerr=result['m_pi/f_pi_err'], yerr=result['a0*m2_err'],
-                linestyle='none', marker='+')
+    for ensemble, data in result.T.iteritems():
+        ax.errorbar(data['m_pi/f_pi_val'], data['a0*m2_val'],
+                    xerr=data['m_pi/f_pi_err'], yerr=data['a0*m2_err'],
+                    linestyle='none', marker='+', label=data[0])
 
     lo_x = np.linspace(
         np.min(result['m_pi/f_pi_val']),
@@ -66,6 +67,8 @@ def plot_results(result):
     ax.set_xlabel(r'$m_\pi / f_\pi$')
     ax.set_ylabel(r'$m_\pi a_0$')
     ax.grid(True)
+
+    ax.legend(loc='best')
 
     fig.tight_layout()
     fig.savefig('result.pdf')
