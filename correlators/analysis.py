@@ -25,6 +25,45 @@ import correlators.transform
 
 LOGGER = logging.getLogger(__name__)
 
+ENSENBLE_DATA = {
+    'A30.32': {
+        'm_pi/f_pi_val' : 1.86,
+        'm_pi/f_pi_err' : 0.0,
+    },
+    'A40.32': {
+        'm_pi/f_pi_val' : 2.06,
+        'm_pi/f_pi_err' : 0.01,
+    },
+    'A40.24': {
+        'm_pi/f_pi_val' : 2.03,
+        'm_pi/f_pi_err' : 0.03,
+    },
+    'A40.20': {
+        'm_pi/f_pi_val' : 2.11,
+        'm_pi/f_pi_err' : 0.05,
+    },
+    'D45.32': {
+        'm_pi/f_pi_val' : 2.49,
+        'm_pi/f_pi_err' : 0.0
+    },
+    'B55.32': {
+        'm_pi/f_pi_val' : 2.34,
+        'm_pi/f_pi_err' : 0.0,
+    },
+    'A60.24': {
+        'm_pi/f_pi_val' : 2.32,
+        'm_pi/f_pi_err' : 0.0,
+    },
+    'A80.24': {
+        'm_pi/f_pi_val' : 2.55,
+        'm_pi/f_pi_err' : 0.0,
+    },
+    'A100.24': {
+        'm_pi/f_pi_val' : 2.77,
+        'm_pi/f_pi_err' : 0.0,
+    },
+}
+
 
 def handle_path(path):
     '''
