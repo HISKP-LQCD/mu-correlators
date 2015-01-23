@@ -109,6 +109,7 @@ def handle_path(path):
         combined
     )
 
+    print(corr_fit_param, corr_fit_err)
 
     #fig.savefig('newton_' + name + '.pdf')
 
