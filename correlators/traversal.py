@@ -41,8 +41,8 @@ def handle_path(path):
                 abspath = os.path.abspath(root)
                 ensemble, results = correlators.analysis.handle_path(root)
                 all_results[ensemble] = results
-            except RuntimeError as e:
-                LOGGER.error('RuntimeError: %s', str(e))
+            #except RuntimeError as e:
+                #LOGGER.error('RuntimeError: %s', str(e))
             except ValueError as e:
                 LOGGER.error('ValueError: %s', str(e))
 
