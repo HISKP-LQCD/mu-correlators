@@ -96,8 +96,8 @@ def handle_path(path):
         combined,
     )
 
-    p0_2 = [val[0], val[3]]
-    p0_4 = [val[1], val[4], val[5]]
+    p0_2 = [val[0], val[4]]
+    p0_4 = [val[1], val[5], val[6]]
 
     corr_fit_param, corr_fit_err = correlators.bootstrap.bootstrap_pre_transform(
         mass_difference_correlated_decorator(T, L, p0_2, p0_4),
