@@ -213,11 +213,11 @@ def mass_difference_correlated_decorator(T, L, p0_2, p0_4, fig=None):
 
         # Perform the fits.
         fit2 = correlators.fit.cosh_fit_decorator(T)
-        p2, chi_sq_2, p_value_2 = correlators.corrfit.fit(fit2, time, sets2,
-                                               omit_pre=13, p0=p0_2)
+        p2, chi_sq_2, p_value_2 = correlators.corrfit.fit(
+            fit2, time, sets2, omit_pre=13, p0=p0_2)
         fit4 = correlators.fit.cosh_fit_offset_decorator(T)
-        p4, chi_sq_4, p_value_4 = correlators.corrfit.fit(fit4, time, sets4,
-                                               omit_pre=13, p0=p0_4)
+        p4, chi_sq_4, p_value_4 = correlators.corrfit.fit(
+            fit4, time, sets4, omit_pre=13, p0=p0_4)
 
 
         m2 = p2[0]
