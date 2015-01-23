@@ -142,7 +142,6 @@ def curve_fit_correlated(function, xdata, ydata, p0, sigma=None):
     return res.x
 
 
-
 def main():
     sets = [
         [10, 8.4, 7.3, 5.1],
