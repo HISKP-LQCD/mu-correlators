@@ -55,6 +55,9 @@ def correlation_matrix(sets):
      [-0.125  -0.275   0.25    0.25  ]
      [-0.125  -0.275   0.25    0.25  ]]
 
+    To leverage NumPy, it treats each square bracket as a matrix, transposes
+    the frist one and does a matrix multiplication.
+
     :param np.array sets: All measurements of the time series.
     :returns: Correlation matrix
     :rtype: np.array
