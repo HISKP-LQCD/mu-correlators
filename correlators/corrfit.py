@@ -128,9 +128,15 @@ def generate_chi_sq_minimizer(average, inv_correlation_matrix, fit_estimator, t)
     return chi_sq_minimizer
 
 
-def curve_fit_correlated(function, xdata, ydata, p0, sigma=None):
+def curve_fit_correlated(function, xdata, ydata, p0):
     cm, av = correlation_matrix(ydata)
-    inv_cm = cm.getI()
+    try:
+        inv_cm = cm.getI()
+    except np.linalg.linalg.LinAlgError as e:
+        print('----')
+        print('This occured while retrieving the inverse of:')
+        print(cm)
+        raise
 
     chi_sq_minimizer = generate_chi_sq_minimizer(av, inv_cm, function, xdata)
 
@@ -142,6 +148,14 @@ def curve_fit_correlated(function, xdata, ydata, p0, sigma=None):
     chi_sq = chi_sq_minimizer(res.x)
 
     return res.x, chi_sq
+
+
+def fit(func, x, y, omit_pre=0, omit_post=0, p0=None):
+    used_x, used_y, used_yerr = correlators.fit._cut(x, y.T, None, omit_pre, omit_post)
+    used_y = used_y.T
+    popt, chi_sq = curve_fit_correlated(func, used_x, used_y, p0=p0)
+
+    return popt, chi_sq
 
 
 def main():

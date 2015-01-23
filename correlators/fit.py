@@ -36,8 +36,6 @@ def fit(func, x, y, yerr=None, omit_pre=0, omit_post=0, p0=None):
     used_x, used_y, used_yerr = _cut(x, y, yerr, omit_pre, omit_post)
     popt, pconv = op.curve_fit(func, used_x, used_y, p0=p0, sigma=used_yerr)
 
-    # params, chi_sq = correlators.corrfit.curve_fit_correlated(func, used_x, sets, popt)
-
     return popt
 
 
