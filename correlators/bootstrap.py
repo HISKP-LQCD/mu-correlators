@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2014-2015 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
 from __future__ import division, absolute_import, print_function, \
@@ -35,10 +35,9 @@ def average_and_std_arrays(arrays):
     return val, err
 
 
-def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
-                            sample_count=250, seed=None):
+def bootstrap_pre_transform(transform, sets, sample_count=250, seed=None):
     '''
-    Bootstraps the sets, reduces them to a single set and transforms them.
+    Bootstraps the sets and transforms them.
 
     This is the recommended method!
 
@@ -51,31 +50,8 @@ def bootstrap_pre_transform(transform, sets, reduction=average_arrays,
     results = []
     for sample_id in xrange(sample_count):
         sample = generate_sample(sets)
-        argument = reduction(sample)
-        results.append(transform(argument))
-
-    val, err = average_and_std_arrays(results)
-
-    return val, err
-
-
-def bootstrap_post_transform(transform, sets, reduction=average_arrays,
-                             sample_count=250, seed=None):
-    '''
-    Applies the transformation to each set and bootstraps the results.
-
-    The return value of the function is assumed to be a one dimensional NumPy
-    array. The return value of this function is one array with the values and
-    another with the errors.
-    '''
-    random.seed(seed)
-
-    transformed_sets = map(transform, sets)
-
-    results = []
-    for sample_id in xrange(sample_count):
-        sample = generate_sample(transformed_sets)
-        results.append(reduction(sample))
+        transformed = transform(sample)
+        results.append(transformed)
 
     val, err = average_and_std_arrays(results)
 

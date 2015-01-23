@@ -98,7 +98,6 @@ def handle_path(path):
     val, err = correlators.bootstrap.bootstrap_pre_transform(
         mass_difference_decorator(T, L),
         combined,
-        correlators.bootstrap.average_combined_array,
     )
 
     #fig.savefig('newton_' + name + '.pdf')
@@ -158,7 +157,8 @@ def handle_path(path):
 
 
 def mass_difference_decorator(T, L, fig=None):
-    def mass_difference(params):
+    def mass_difference(sets):
+        params = correlators.bootstrap.average_combined_array(sets)
         # Unpack all the arguments from the list.
         (c2_val, c2_err), (c4_val, c4_err) = params
 
