@@ -62,26 +62,24 @@ def correlation_matrix(sets):
     N = len(sets)
 
     x = np.array(sets)
-    print('x')
-    print(x)
 
     average = np.mean(sets, axis=0)
-    print('Average')
-    print(average)
 
     xi = np.asmatrix(x - average).T
     xj = np.asmatrix(x - average)
 
-    print('x_i')
-    print(xi)
-    print('x_j')
-    print(xj)
-
-
     matrix = 1/(N*(N-1)) * xi * xj
 
-    print('Result')
-    print(matrix)
+    # print('x')
+    # print(x)
+    # print('Average')
+    # print(average)
+    # print('x_i')
+    # print(xi)
+    # print('x_j')
+    # print(xj)
+    # print('Result')
+    # print(matrix)
 
     return matrix
 
