@@ -154,8 +154,9 @@ def main():
     f = correlators.fit.cosh_fit_decorator(10)
 
     time = np.array(range(len(sets[0])))
-    param = curve_fit_correlated(f, time, sets, [0.3, 10])
-    print(param)
+    params, chi_sq = curve_fit_correlated(f, time, sets, [0.3, 10])
+    print(params)
+    print(chi_sq)
 
 
 if __name__ == '__main__':
