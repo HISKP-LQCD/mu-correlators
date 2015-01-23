@@ -12,6 +12,9 @@ from __future__ import division, absolute_import, print_function, \
     unicode_literals
 
 import numpy as np
+import scipy.optimize as op
+
+import correlators.fit
 
 
 def correlation_matrix(sets):
@@ -117,6 +120,29 @@ def correlated_chi_square(average, fit_estimate, inv_correlation_matrix):
     return chi_sq[0, 0]
 
 
+def generate_chi_sq_minimizer(average, inv_correlation_matrix, fit_estimator, t):
+    def chi_sq_minimizer(parameters):
+        fit_estimate = fit_estimator(t, *parameters)
+        return correlated_chi_square(average, fit_estimate,
+                                     inv_correlation_matrix)
+    return chi_sq_minimizer
+
+
+def curve_fit_correlated(function, xdata, ydata, p0, sigma=None):
+    cm, av = correlation_matrix(ydata)
+    inv_cm = cm.getI()
+
+    chi_sq_minimizer = generate_chi_sq_minimizer(av, inv_cm, function, xdata)
+
+    res = op.minimize(chi_sq_minimizer, p0)
+
+    if not res.success:
+        print(res.message)
+
+    return res.x
+
+
+
 def main():
     sets = [
         [10, 8.4, 7.3, 5.1],
@@ -124,13 +150,11 @@ def main():
         [13.5, 9.3, 6.2, 4.4],
     ]
 
-    cm, av = correlation_matrix(sets)
-    print(cm)
+    f = correlators.fit.cosh_fit_decorator(10)
 
-    inv_cm = cm.getI()
-
-    chi_sq = correlated_chi_square(av, [10.5, 9.5, 6.3, 4.1], inv_cm)
-    print(chi_sq)
+    time = np.array(range(len(sets[0])))
+    param = curve_fit_correlated(f, time, sets, [0.3, 10])
+    print(param)
 
 
 if __name__ == '__main__':
