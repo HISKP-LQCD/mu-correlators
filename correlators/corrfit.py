@@ -139,7 +139,9 @@ def curve_fit_correlated(function, xdata, ydata, p0, sigma=None):
     if not res.success:
         print(res.message)
 
-    return res.x
+    chi_sq = chi_sq_minimizer(res.x)
+
+    return res.x, chi_sq
 
 
 def main():
