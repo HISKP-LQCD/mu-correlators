@@ -13,6 +13,7 @@ from __future__ import division, absolute_import, print_function, \
 
 import numpy as np
 import scipy.optimize as op
+import matplotlib.pyplot as pl
 
 import correlators.fit
 
@@ -153,6 +154,15 @@ def curve_fit_correlated(function, xdata, ydata, p0):
 def fit(func, x, y, omit_pre=0, omit_post=0, p0=None):
     used_x, used_y, used_yerr = correlators.fit._cut(x, y.T, None, omit_pre, omit_post)
     used_y = used_y.T
+
+    """
+    print(p0)
+    for used_y_line in used_y:
+        pl.plot(used_x, used_y_line, alpha=0.5, color='blue')
+    pl.plot(used_x, func(used_x, *p0), color='red')
+    pl.show()
+    """
+
     popt, chi_sq = curve_fit_correlated(func, used_x, used_y, p0=p0)
 
     return popt, chi_sq
