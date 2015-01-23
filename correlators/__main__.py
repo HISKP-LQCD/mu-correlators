@@ -54,6 +54,7 @@ def main():
         result = pd.read_csv('results.csv')
     else:
         result = correlators.traversal.handle_path(options.path).T
+        pd.set_option('display.max_columns', None)
         print(result)
         result.to_csv('results.csv')
 
