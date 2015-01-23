@@ -75,18 +75,18 @@ def correlation_matrix(sets):
 
     matrix = 1/(N*(N-1)) * vec.T * vec
 
-    print('----')
-    print('N')
-    print(N)
-    print('x')
-    print(x)
-    print('Average')
-    print(average)
-    print('vec')
-    print(vec)
-    print('Result')
-    print(matrix)
-    print('----')
+    # print('----')
+    # print('N')
+    # print(N)
+    # print('x')
+    # print(x)
+    # print('Average')
+    # print(average)
+    # print('vec')
+    # print(vec)
+    # print('Result')
+    # print(matrix)
+    # print('----')
 
     return matrix, average
 
@@ -112,15 +112,16 @@ def correlated_chi_square(average, fit_estimate, inv_correlation_matrix):
     :returns: :math:`\chi^2` value
     :rtype: float
     '''
-    vec = average - fit_estimate
-    chi_sq = vec.T * inv_correlation_matrix * vec
-    return chi_sq
+    vec = np.asmatrix(average - fit_estimate)
+    chi_sq = vec * inv_correlation_matrix * vec.T
+    return chi_sq[0, 0]
 
 
 def main():
     sets = [
         [10, 8.4, 7.3, 5.1],
         [10.5, 9.5, 6.3, 4.1],
+        [13.5, 9.3, 6.2, 4.4],
     ]
 
     cm, av = correlation_matrix(sets)
@@ -128,7 +129,7 @@ def main():
 
     inv_cm = cm.getI()
 
-    chi_sq = correlated_chi_square(av, 0, inv_cm)
+    chi_sq = correlated_chi_square(av, [10.5, 9.5, 6.3, 4.1], inv_cm)
     print(chi_sq)
 
 
