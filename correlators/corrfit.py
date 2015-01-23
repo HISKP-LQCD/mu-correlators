@@ -142,7 +142,7 @@ def curve_fit_correlated(function, xdata, ydata, p0):
 
     chi_sq_minimizer = generate_chi_sq_minimizer(av, inv_cm, function, xdata)
 
-    res = op.minimize(chi_sq_minimizer, p0)
+    res = op.minimize(chi_sq_minimizer, p0, method='Powell')
 
     if not res.success:
         print(res.message)
