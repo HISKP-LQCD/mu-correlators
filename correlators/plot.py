@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2014-2015 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
 """
@@ -26,7 +26,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 def plot_correlator(sets, name, shift, offset=False):
-    folded_val, folded_err = correlators.bootstrap.bootstrap_pre_transform(lambda x: x, sets)
+    folded_val, folded_err = correlators.bootstrap.bootstrap_pre_transform(
+        correlators.bootstrap.average_arrays, sets
+    )
 
     time_folded = np.array(range(len(folded_val)))
 
