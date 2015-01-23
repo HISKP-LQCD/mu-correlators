@@ -127,6 +127,32 @@ def handle_path(path):
         'a0*m2_err': err[7],
         'm2**2_val': val[8],
         'm2**2_err': err[8],
+        'corr__m_2_val': corr_fit_param[0],
+        'corr__m_2_err': corr_fit_err[0],
+        'corr__m_4_val': corr_fit_param[1],
+        'corr__m_4_err': corr_fit_err[1],
+        'corr__Delta E_val': corr_fit_param[2],
+        'corr__Delta E_err': corr_fit_err[2],
+        'corr__a_0_val': corr_fit_param[3],
+        'corr__a_0_err': corr_fit_err[3],
+        'corr__amp_2_val': corr_fit_param[4],
+        'corr__amp_2_err': corr_fit_err[4],
+        'corr__amp_4_val': corr_fit_param[5],
+        'corr__amp_4_err': corr_fit_err[5],
+        'corr__offset_4_val': corr_fit_param[6],
+        'corr__offset_4_err': corr_fit_err[6],
+        'corr__a0*m2_val': corr_fit_param[7],
+        'corr__a0*m2_err': corr_fit_err[7],
+        'corr__m2**2_val': corr_fit_param[8],
+        'corr__m2**2_err': corr_fit_err[8],
+        'corr__chi_sq_2_val': corr_fit_param[9],
+        'corr__chi_sq_2_err': corr_fit_err[9],
+        'corr__chi_sq_4_val': corr_fit_param[10],
+        'corr__chi_sq_4_err': corr_fit_err[10],
+        'corr__p_value_2_val': corr_fit_param[11],
+        'corr__p_value_2_err': corr_fit_err[11],
+        'corr__p_value_4_val': corr_fit_param[12],
+        'corr__p_value_4_err': corr_fit_err[12],
         'm_pi/f_pi_val': m_pi_f_pi_val,
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
@@ -207,6 +233,6 @@ def mass_difference_correlated_decorator(T, L, p0_2, p0_4, fig=None):
         a0 = correlators.scatlen.compute_a0(m2, m4, L, fig)
 
         return m2, m4, delta_m, a0, amp2, amp4, offset, a0*m2, m2**2, \
-                chi_sq_2, chi_sq_4
+                chi_sq_2, chi_sq_4, p_value_2, p_value_4
 
     return mass_difference_correlated
