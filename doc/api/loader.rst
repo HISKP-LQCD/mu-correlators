@@ -1,8 +1,8 @@
-.. Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
+.. Copyright © 2014-2015 Martin Ueding <dev@martin-ueding.de>
 
 ######
 loader
 ######
 
-.. automodule:: loader
+.. automodule:: correlators.loader
     :members:
