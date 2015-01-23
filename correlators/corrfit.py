@@ -8,6 +8,9 @@
 Fitting correlated data with least squares.
 '''
 
+from __future__ import division, absolute_import, print_function, \
+    unicode_literals
+
 import numpy as np
 
 
@@ -59,8 +62,8 @@ def correlation_matrix(sets):
     the frist one and does a matrix multiplication.
 
     :param np.array sets: All measurements of the time series.
-    :returns: Correlation matrix
-    :rtype: np.array
+    :returns: Correlation matrix and average vector
+    :rtype: tuple(np.array, np.array)
     '''
     N = len(sets)
 
@@ -68,23 +71,50 @@ def correlation_matrix(sets):
 
     average = np.mean(sets, axis=0)
 
-    xi = np.asmatrix(x - average).T
-    xj = np.asmatrix(x - average)
+    vec = np.asmatrix(x - average)
 
-    matrix = 1/(N*(N-1)) * xi * xj
+    matrix = 1/(N*(N-1)) * vec.T * vec
 
-    # print('x')
-    # print(x)
-    # print('Average')
-    # print(average)
-    # print('x_i')
-    # print(xi)
-    # print('x_j')
-    # print(xj)
-    # print('Result')
-    # print(matrix)
+    print('----')
+    print('N')
+    print(N)
+    print('x')
+    print(x)
+    print('Average')
+    print(average)
+    print('vec')
+    print(vec)
+    print('Result')
+    print(matrix)
+    print('----')
 
-    return matrix
+    return matrix, average
+
+
+def correlated_chi_square(average, fit_estimate, inv_correlation_matrix):
+    r'''
+    Computes the correlated :math:`\chi^2` function.
+
+    Given the correlation matrix :math:`C`, the fit estimator function
+    :math:`f(t_i, \lambda)` with parameters :math:`\lambda_1, \lambda_2,
+    \ldots` the correlated :math:`\chi^2` is given by:
+
+    .. math::
+
+        \chi^2 = \sum_{i, j}
+        \left[ \bar x_{iN} - f(t_i, \lambda) \right]
+        C^{-1}_{ij}
+        \left[ \bar x_{jN} - f(t_j, \lambda) \right]
+
+    :param np.array average: Vector with averages over all time series
+    :param np.array fit_estimate: Vector with fit estimates for the time series
+    :param np.array inv_correlation_matrix: Inverse correlation matrix
+    :returns: :math:`\chi^2` value
+    :rtype: float
+    '''
+    vec = average - fit_estimate
+    chi_sq = vec.T * inv_correlation_matrix * vec
+    return chi_sq
 
 
 def main():
@@ -93,8 +123,13 @@ def main():
         [10.5, 9.5, 6.3, 4.1],
     ]
 
-    cm = correlation_matrix(sets)
+    cm, av = correlation_matrix(sets)
     print(cm)
+
+    inv_cm = cm.getI()
+
+    chi_sq = correlated_chi_square(av, 0, inv_cm)
+    print(chi_sq)
 
 
 if __name__ == '__main__':
