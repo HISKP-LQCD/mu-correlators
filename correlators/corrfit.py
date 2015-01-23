@@ -11,9 +11,10 @@ Fitting correlated data with least squares.
 from __future__ import division, absolute_import, print_function, \
     unicode_literals
 
+import matplotlib.pyplot as pl
 import numpy as np
 import scipy.optimize as op
-import matplotlib.pyplot as pl
+import scipy.stats
 
 import correlators.fit
 
@@ -155,17 +156,26 @@ def fit(func, x, y, omit_pre=0, omit_post=0, p0=None):
     used_x, used_y, used_yerr = correlators.fit._cut(x, y.T, None, omit_pre, omit_post)
     used_y = used_y.T
 
-    """
-    print(p0)
-    for used_y_line in used_y:
-        pl.plot(used_x, used_y_line, alpha=0.5, color='blue')
-    pl.plot(used_x, func(used_x, *p0), color='red')
-    pl.show()
-    """
 
     popt, chi_sq = curve_fit_correlated(func, used_x, used_y, p0=p0)
 
-    return popt, chi_sq
+    p_value = 1 - scipy.stats.chi2.cdf(chi_sq, len(used_x) - 1 - len(popt))
+
+    print('-----')
+    print(', '.join(['{:.5g} → {:.5g}'.format(a, b) for a, b in zip(p0, popt)]))
+    print(chi_sq, p_value)
+
+
+    """
+    for used_y_line in used_y:
+        pl.plot(used_x, used_y_line, alpha=0.5, color='blue')
+    pl.plot(used_x, func(used_x, *p0), color='green', linewidth=4)
+    pl.plot(used_x, func(used_x, *popt), color='red', linewidth=4, linestyle='--')
+    pl.show()
+    pl.clf()
+    """
+
+    return popt, chi_sq, p_value
 
 
 def main():
