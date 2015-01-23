@@ -105,7 +105,7 @@ def correlator_loader(filename):
     :rtype: np.array
     '''
     dtype = np.dtype(np.complex128)
-    data = np.fromfile(filename, dtype)
+    data = np.real(np.fromfile(filename, dtype))
 
     return data
 
