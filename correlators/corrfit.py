@@ -96,6 +96,10 @@ def correlation_matrix(sets):
     return matrix, average
 
 
+def rel_change(old, new):
+    return np.abs(old - new) / old
+
+
 def correlated_chi_square(average, fit_estimate, inv_correlation_matrix):
     r'''
     Computes the correlated :math:`\chi^2` function.
@@ -161,9 +165,11 @@ def fit(func, x, y, omit_pre=0, omit_post=0, p0=None):
 
     p_value = 1 - scipy.stats.chi2.cdf(chi_sq, len(used_x) - 1 - len(popt))
 
-    print('-----')
-    print(', '.join(['{:.5g} → {:.5g}'.format(a, b) for a, b in zip(p0, popt)]))
-    print(chi_sq, p_value)
+
+    if any([rel_change(a, b) > 0.1 for a, b in zip(p0, popt)]):
+        print('-----')
+        print(', '.join(['{:.5g} → {:.5g}'.format(a, b) for a, b in zip(p0, popt)]))
+        print(chi_sq, p_value)
 
 
     """
