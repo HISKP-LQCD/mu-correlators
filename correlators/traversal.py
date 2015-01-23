@@ -30,6 +30,10 @@ def handle_path(path):
             del dirs[:]
             continue
 
+        if 'Kpi' in root:
+            del dirs[:]
+            continue
+
         if len(dirs) == 0:
             LOGGER.info('Found a leaf at `%s`.', root)
 
@@ -37,14 +41,14 @@ def handle_path(path):
                 LOGGER.warning('Empty directory as `%s`.', root)
                 continue
 
-            #try:
-            abspath = os.path.abspath(root)
-            ensemble, results = correlators.analysis.handle_path(root)
-            all_results[ensemble] = results
-            #except RuntimeError as e:
-                #LOGGER.error('RuntimeError: %s', str(e))
-            #except ValueError as e:
-                #LOGGER.error('ValueError: %s', str(e))
+            try:
+                abspath = os.path.abspath(root)
+                ensemble, results = correlators.analysis.handle_path(root)
+                all_results[ensemble] = results
+            except RuntimeError as e:
+                LOGGER.error('RuntimeError: %s', str(e))
+            except ValueError as e:
+                LOGGER.error('ValueError: %s', str(e))
 
         else:
             dirs.sort()
