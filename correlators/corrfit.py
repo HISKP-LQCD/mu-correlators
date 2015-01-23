@@ -94,6 +94,7 @@ def main():
     ]
 
     cm = correlation_matrix(sets)
+    print(cm)
 
 
 if __name__ == '__main__':
