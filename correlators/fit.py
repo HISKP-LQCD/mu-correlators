@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2014 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2014-2015 Martin Ueding <dev@martin-ueding.de>
 # Licensed under The GNU Public License Version 2
 
 from __future__ import division, absolute_import, print_function, \
@@ -35,6 +35,8 @@ def _cut(x, y, yerr, omit_pre, omit_post):
 def fit(func, x, y, yerr=None, omit_pre=0, omit_post=0, p0=None):
     used_x, used_y, used_yerr = _cut(x, y, yerr, omit_pre, omit_post)
     popt, pconv = op.curve_fit(func, used_x, used_y, p0=p0, sigma=used_yerr)
+
+    # params, chi_sq = correlators.corrfit.curve_fit_correlated(func, used_x, sets, popt)
 
     return popt
 
