@@ -85,12 +85,15 @@ def handle_path(path):
     L = int(parameters['L'])
 
     # Combine the two lists of data into one list of lists. That way the
-    # configurations are grouped together.
-    combined = zip(two_points, four_points)
+    # configurations are grouped together and will stay together in
+    # bootstrapping.
+    combined_correlators = zip(two_points, four_points)
+
+    analysis_function = analyze_factory(T, L)
 
     val, err = correlators.bootstrap.bootstrap_pre_transform(
-        mass_difference_decorator(T, L),
-        combined,
+        analysis_function,
+        combined_correlators,
     )
 
     p0_2 = [val[0], val[4]]
