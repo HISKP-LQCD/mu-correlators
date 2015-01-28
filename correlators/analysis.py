@@ -191,6 +191,38 @@ def analyze(sets, T, L):
 
     return m2, m4, delta_m, a0, amp2, amp4, offset, a0*m2, m2**2
 
+    sets2, sets4 = zip(*sets)
+
+    sets2 = np.array(sets2)
+    sets4 = np.array(sets4)
+
+    # Generate a single time, they are all the same.
+    time = np.array(range(len(sets2[0])))
+
+    # Perform the fits.
+    fit2 = correlators.fit.cosh_fit_decorator(T)
+    p2, chi_sq_2, p_value_2 = correlators.corrfit.fit(
+        fit2, time, sets2, omit_pre=13, p0=p0_2)
+    fit4 = correlators.fit.cosh_fit_offset_decorator(T)
+    p4, chi_sq_4, p_value_4 = correlators.corrfit.fit(
+        fit4, time, sets4, omit_pre=13, p0=p0_4)
+
+
+    m2 = p2[0]
+    m4 = p4[0]
+
+    amp2 = p2[1]
+    amp4 = p4[1]
+
+    offset = p4[2]
+
+    delta_m = m4 - 2 * m2
+
+    a0 = correlators.scatlen.compute_a0(m2, m4, L, fig)
+
+    return m2, m4, delta_m, a0, amp2, amp4, offset, a0*m2, m2**2, \
+            chi_sq_2, chi_sq_4, p_value_2, p_value_4
+
 
 def analyze_factory(T, L):
     '''
@@ -201,40 +233,3 @@ def analyze_factory(T, L):
         analyse(sets, T, L)
 
     return analyze_curried
-
-
-def mass_difference_correlated_decorator(T, L, p0_2, p0_4, fig=None):
-    def mass_difference_correlated(sets):
-        sets2, sets4 = zip(*sets)
-
-        sets2 = np.array(sets2)
-        sets4 = np.array(sets4)
-
-        # Generate a single time, they are all the same.
-        time = np.array(range(len(sets2[0])))
-
-        # Perform the fits.
-        fit2 = correlators.fit.cosh_fit_decorator(T)
-        p2, chi_sq_2, p_value_2 = correlators.corrfit.fit(
-            fit2, time, sets2, omit_pre=13, p0=p0_2)
-        fit4 = correlators.fit.cosh_fit_offset_decorator(T)
-        p4, chi_sq_4, p_value_4 = correlators.corrfit.fit(
-            fit4, time, sets4, omit_pre=13, p0=p0_4)
-
-
-        m2 = p2[0]
-        m4 = p4[0]
-
-        amp2 = p2[1]
-        amp4 = p4[1]
-
-        offset = p4[2]
-
-        delta_m = m4 - 2 * m2
-
-        a0 = correlators.scatlen.compute_a0(m2, m4, L, fig)
-
-        return m2, m4, delta_m, a0, amp2, amp4, offset, a0*m2, m2**2, \
-                chi_sq_2, chi_sq_4, p_value_2, p_value_4
-
-    return mass_difference_correlated
