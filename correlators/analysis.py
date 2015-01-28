@@ -231,9 +231,6 @@ def analyze_factory(T, L):
         analyse(sets, T, L)
 
     return analyze_curried
-    # The bootstrap function gives all the sets. They have to be averaged
-    # first.
-    params = correlators.bootstrap.average_combined_array(sets)
 
 
 def unwrap_correlator_values(boot_correlators, index):
