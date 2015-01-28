@@ -12,6 +12,7 @@ from __future__ import division, absolute_import, print_function, \
     unicode_literals
 
 import logging
+import sys
 
 import matplotlib.pyplot as pl
 import numpy as np
@@ -87,7 +88,10 @@ def handle_path(path):
     # Combine the two lists of data into one list of lists. That way the
     # configurations are grouped together and will stay together in
     # bootstrapping.
-    combined_correlators = zip(two_points, four_points)
+    orig_correlators = zip(two_points, four_points)
+    boot_correlators = correlators.bootstrap.generate_reduced_samples(
+        orig_correlators, 3 * len(orig_correlators),
+    )
 
     analysis_function = analyze_factory(T, L)
 
