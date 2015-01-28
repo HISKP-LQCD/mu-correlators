@@ -93,6 +93,9 @@ def handle_path(path):
         orig_correlators, 3 * len(orig_correlators),
     )
 
+    correlators_2_val = unwrap_correlator_values(boot_correlators, 0)
+    correlators_4_val = unwrap_correlator_values(boot_correlators, 1)
+
     analysis_function = analyze_factory(T, L)
 
     val, err = correlators.bootstrap.bootstrap_pre_transform(
@@ -157,10 +160,6 @@ def handle_path(path):
     return parameters['ensemble'], series
 
 def analyze(sets, T, L):
-    # The bootstrap function gives all the sets. They have to be averaged
-    # first.
-    params = correlators.bootstrap.average_combined_array(sets)
-
     # Unpack all the arguments from the list.
     (c2_val, c2_err), (c4_val, c4_err) = params
 
@@ -232,3 +231,13 @@ def analyze_factory(T, L):
         analyse(sets, T, L)
 
     return analyze_curried
+    # The bootstrap function gives all the sets. They have to be averaged
+    # first.
+    params = correlators.bootstrap.average_combined_array(sets)
+
+
+def unwrap_correlator_values(boot_correlators, index):
+    return [
+        bootstrap_set[index][0]
+        for bootstrap_set in boot_correlators
+    ]
