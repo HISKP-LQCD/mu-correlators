@@ -91,6 +91,8 @@ def handle_path(path):
     # configurations are grouped together and will stay together in
     # bootstrapping.
     orig_correlators = zip(two_points, four_points)
+    (mean_2_val, mean_2_err), (mean_4_val, mean_4_err) = \
+            correlators.bootstrap.average_combined_array(orig_correlators)
     sample_count = 3 * len(orig_correlators)
     boot_correlators = correlators.bootstrap.generate_reduced_samples(
         orig_correlators, sample_count,
@@ -114,22 +116,37 @@ def handle_path(path):
     # Generate a single time, they are all the same.
     time = np.array(range(len(correlators_2_val[0])))
 
+    mean_results = analyze_2_4(
+        time, mean_2_val, mean_2_err, inv_corr_mat_2,
+        correlators.fit.cosh_fit_decorator, [0.222, mean_2_val[0]],
+        mean_4_val, mean_4_err, inv_corr_mat_4,
+        correlators.fit.cosh_fit_offset_decorator, [0.222, mean_4_val[0], 0],
+        T, L, omit_pre,
+    )
+
+    boot_results = {}
+
     for sample_id in range(sample_count):
-        m_2, p_value_2 = perform_fits(
+        boot_result = analyze_2_4(
             time, correlators_2_val[sample_id], correlators_2_err[sample_id],
             inv_corr_mat_2, correlators.fit.cosh_fit_decorator,
-            [0.222, correlators_2_val[sample_id][0]], T, omit_pre
-        )
-
-        m_4, p_value_4 = perform_fits(
-            time, correlators_4_val[sample_id], correlators_4_err[sample_id],
+            [0.222, correlators_2_val[sample_id][0]],
+            correlators_4_val[sample_id], correlators_4_err[sample_id],
             inv_corr_mat_4, correlators.fit.cosh_fit_offset_decorator,
-            [0.222, correlators_2_val[sample_id][0], 0], T, omit_pre
+            [0.222, correlators_2_val[sample_id][0], 0], T, L, omit_pre
         )
 
-        delta_m = m_4 - 2 * m_2
+        # Join those results with the existing ones.
+        # XXX This might be doable with Pandas easier.
+        for key, value in boot_result.iteritems():
+            if key in boot_results:
+                boot_results[key].append(value)
+            else:
+                boot_results[key] = []
 
-        a_0 = correlators.scatlen.compute_a0(m_2, m_4, L)
+
+    print(boot_results)
+    print(mean_results)
 
     series = pd.Series({
         'm_pi/f_pi_val': m_pi_f_pi_val,
@@ -241,3 +258,31 @@ def perform_fits(time, corr_val, corr_err, inv_corr_mat, fit_factory, p0, T, omi
     p_value = 1 - scipy.stats.chi2.cdf(chi_sq, dof)
 
     return fit_param_corr[0], p_value
+
+
+def analyze_2_4(time, correlator_2_val, correlator_2_err, inv_corr_mat_2,
+                fit_factory_2, p0_2, correlator_4_val, correlator_4_err,
+                inv_corr_mat_4, fit_factory_4, p0_4, T, L, omit_pre):
+    m_2, p_value_2 = perform_fits(
+        time, correlator_2_val, correlator_2_err, inv_corr_mat_2,
+        fit_factory_2, p0_2, T, omit_pre
+    )
+
+    m_4, p_value_4 = perform_fits(
+        time, correlator_4_val, correlator_4_err, inv_corr_mat_4,
+        fit_factory_4, p0_4, T, omit_pre
+    )
+
+    delta_m = m_4 - 2 * m_2
+
+    a_0 = correlators.scatlen.compute_a0(m_2, m_4, L)
+
+    return {
+        'a_0': a_0,
+        'm_2': m_2,
+        'm_4': m_4,
+        'a_0*m_2': a_0 * m_2,
+        'm_2^2': m_2**2,
+        'p_value_2': p_value_2,
+        'p_value_4': p_value_4,
+    }
