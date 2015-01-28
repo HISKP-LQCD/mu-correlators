@@ -17,6 +17,7 @@ import sys
 import matplotlib.pyplot as pl
 import numpy as np
 import pandas as pd
+import progressbar
 import scipy.optimize as op
 import scipy.stats
 
@@ -95,7 +96,7 @@ def handle_path(path):
             correlators.bootstrap.average_combined_array(orig_correlators)
 
     sample_count = 3 * len(orig_correlators)
-    sample_count = 100
+    #sample_count = 100
 
     boot_correlators = correlators.bootstrap.generate_reduced_samples(
         orig_correlators, sample_count,
@@ -129,7 +130,9 @@ def handle_path(path):
 
     boot_results = {}
 
-    for sample_id in range(sample_count):
+
+    p_bar = progressbar.ProgressBar()
+    for sample_id in p_bar(range(sample_count)):
         boot_result = analyze_2_4(
             time, correlators_2_val[sample_id], correlators_2_err[sample_id],
             inv_corr_mat_2, correlators.fit.cosh_fit_decorator,
@@ -148,9 +151,6 @@ def handle_path(path):
                 boot_results[key] = []
 
 
-    print(boot_results)
-    print(mean_result)
-
     boot_result = {
         key: np.std(np.array(dist))
         for key, dist in boot_results.iteritems()
@@ -165,6 +165,10 @@ def handle_path(path):
         'm_4_err': boot_result['m_4'],
         'a_0*m_2_val': mean_result['a_0*m_2'],
         'a_0*m_2_err': boot_result['a_0*m_2'],
+        'p_value_2_val': mean_result['p_value_2'],
+        'p_value_2_err': boot_result['p_value_2'],
+        'p_value_4_val': mean_result['p_value_4'],
+        'p_value_4_err': boot_result['p_value_4'],
         'm_pi/f_pi_val': m_pi_f_pi_val,
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
