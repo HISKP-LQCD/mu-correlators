@@ -76,9 +76,9 @@ def correlation_matrix(sets):
 
     average = np.mean(sets, axis=0)
 
-    vec = np.asmatrix(x - average)
+    deviations = np.asmatrix(x - average)
 
-    matrix = 1/(N*(N-1)) * vec.T * vec
+    matrix = 1/(N*(N-1)) * deviations.T * deviations
 
     # print('----')
     # print('N')
@@ -93,7 +93,7 @@ def correlation_matrix(sets):
     # print(matrix)
     # print('----')
 
-    return matrix, average
+    return matrix
 
 
 def rel_change(old, new):
@@ -134,17 +134,8 @@ def generate_chi_sq_minimizer(average, inv_correlation_matrix, fit_estimator, t)
     return chi_sq_minimizer
 
 
-def curve_fit_correlated(function, xdata, ydata, p0):
-    cm, av = correlation_matrix(ydata)
-    try:
-        inv_cm = cm.getI()
-    except np.linalg.linalg.LinAlgError as e:
-        print('----')
-        print('This occured while retrieving the inverse of:')
-        print(cm)
-        raise
-
-    chi_sq_minimizer = generate_chi_sq_minimizer(av, inv_cm, function, xdata)
+def curve_fit_correlated(function, xdata, ydata, inv_cm, p0):
+    chi_sq_minimizer = generate_chi_sq_minimizer(ydata, inv_cm, function, xdata)
 
     res = op.minimize(chi_sq_minimizer, p0, method='Powell')
 

@@ -17,6 +17,8 @@ import sys
 import matplotlib.pyplot as pl
 import numpy as np
 import pandas as pd
+import scipy.optimize as op
+import scipy.stats
 
 import correlators.bootstrap
 import correlators.corrfit
@@ -89,68 +91,49 @@ def handle_path(path):
     # configurations are grouped together and will stay together in
     # bootstrapping.
     orig_correlators = zip(two_points, four_points)
+    sample_count = 3 * len(orig_correlators)
     boot_correlators = correlators.bootstrap.generate_reduced_samples(
-        orig_correlators, 3 * len(orig_correlators),
+        orig_correlators, sample_count,
     )
 
+    # Extract the corrleator values to compute correlation matrices.
     correlators_2_val = unwrap_correlator_values(boot_correlators, 0)
     correlators_4_val = unwrap_correlator_values(boot_correlators, 1)
+    correlators_2_err = unwrap_correlator_errors(boot_correlators, 0)
+    correlators_4_err = unwrap_correlator_errors(boot_correlators, 1)
 
-    analysis_function = analyze_factory(T, L)
+    # Compute the correlation matrices from the bootstrap samples only.
+    corr_matrix_2 = correlators.corrfit.correlation_matrix(correlators_2_val)
+    corr_matrix_4 = correlators.corrfit.correlation_matrix(correlators_4_val)
 
-    val, err = correlators.bootstrap.bootstrap_pre_transform(
-        analysis_function,
-        combined_correlators,
-    )
+    omit_pre = 13
 
-    p0_2 = [val[0], val[4]]
-    p0_4 = [val[1], val[5], val[6]]
+    inv_corr_mat_2 = corr_matrix_2[omit_pre:, omit_pre:].getI()
+    inv_corr_mat_4 = corr_matrix_4[omit_pre:, omit_pre:].getI()
+
+    # Generate a single time, they are all the same.
+    time = np.array(range(len(correlators_2_val[0])))
+
+    for sample_id in range(sample_count):
+        m_2, p_value_2 = perform_fits(
+            time, correlators_2_val[sample_id], correlators_2_err[sample_id],
+            inv_corr_mat_2, correlators.fit.cosh_fit_decorator,
+            [0.222, correlators_2_val[sample_id][0]], T, omit_pre
+        )
+
+        m_4, p_value_4 = perform_fits(
+            time, correlators_4_val[sample_id], correlators_4_err[sample_id],
+            inv_corr_mat_4, correlators.fit.cosh_fit_offset_decorator,
+            [0.222, correlators_2_val[sample_id][0], 0], T, omit_pre
+        )
+
+        delta_m = m_4 - 2 * m_2
+
+        a_0 = correlators.scatlen.compute_a0(m_2, m_4, L)
+
+        print(m_2, m_4)
 
     series = pd.Series({
-        'm_2_val': val[0],
-        'm_2_err': err[0],
-        'm_4_val': val[1],
-        'm_4_err': err[1],
-        'Delta E_val': val[2],
-        'Delta E_err': err[2],
-        'a_0_val': val[3],
-        'a_0_err': err[3],
-        'amp_2_val': val[4],
-        'amp_2_err': err[4],
-        'amp_4_val': val[5],
-        'amp_4_err': err[5],
-        'offset_4_val': val[6],
-        'offset_4_err': err[6],
-        'a0*m2_val': val[7],
-        'a0*m2_err': err[7],
-        'm2**2_val': val[8],
-        'm2**2_err': err[8],
-        'corr__m_2_val': corr_fit_param[0],
-        'corr__m_2_err': corr_fit_err[0],
-        'corr__m_4_val': corr_fit_param[1],
-        'corr__m_4_err': corr_fit_err[1],
-        'corr__Delta E_val': corr_fit_param[2],
-        'corr__Delta E_err': corr_fit_err[2],
-        'corr__a_0_val': corr_fit_param[3],
-        'corr__a_0_err': corr_fit_err[3],
-        'corr__amp_2_val': corr_fit_param[4],
-        'corr__amp_2_err': corr_fit_err[4],
-        'corr__amp_4_val': corr_fit_param[5],
-        'corr__amp_4_err': corr_fit_err[5],
-        'corr__offset_4_val': corr_fit_param[6],
-        'corr__offset_4_err': corr_fit_err[6],
-        'corr__a0*m2_val': corr_fit_param[7],
-        'corr__a0*m2_err': corr_fit_err[7],
-        'corr__m2**2_val': corr_fit_param[8],
-        'corr__m2**2_err': corr_fit_err[8],
-        'corr__chi_sq_2_val': corr_fit_param[9],
-        'corr__chi_sq_2_err': corr_fit_err[9],
-        'corr__chi_sq_4_val': corr_fit_param[10],
-        'corr__chi_sq_4_err': corr_fit_err[10],
-        'corr__p_value_2_val': corr_fit_param[11],
-        'corr__p_value_2_err': corr_fit_err[11],
-        'corr__p_value_4_val': corr_fit_param[12],
-        'corr__p_value_4_err': corr_fit_err[12],
         'm_pi/f_pi_val': m_pi_f_pi_val,
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
@@ -222,19 +205,41 @@ def analyze(sets, T, L):
             chi_sq_2, chi_sq_4, p_value_2, p_value_4
 
 
-def analyze_factory(T, L):
-    '''
-    Generates an :py:`analyse` function that already has the values for T and L
-    fixed.
-    '''
-    def analyze_curried(sets):
-        analyse(sets, T, L)
-
-    return analyze_curried
-
-
 def unwrap_correlator_values(boot_correlators, index):
     return [
         bootstrap_set[index][0]
         for bootstrap_set in boot_correlators
     ]
+
+
+def unwrap_correlator_errors(boot_correlators, index):
+    return [
+        bootstrap_set[index][1]
+        for bootstrap_set in boot_correlators
+    ]
+
+
+def perform_fits(time, corr_val, corr_err, inv_corr_mat, fit_factory, p0, T, omit_pre):
+    # Generate a fit function from the factory.
+    fit_function = fit_factory(T)
+
+    # Select the data for the fit.
+    used_x, used_y, used_yerr = correlators.fit._cut(time, corr_val.T,
+                                                     corr_err.T, omit_pre, 0)
+    used_y = used_y.T
+    used_yerr = used_yerr.T
+
+    # Perform a regular fit with the given initial parameters.
+    fit_param, pconv = op.curve_fit(fit_function, used_x, used_y, p0=p0,
+                                    sigma=used_yerr)
+
+    # Then perform a correlated fit using the previous result as the input.
+    # This way it should be more stable.
+    fit_param_corr, chi_sq = correlators.corrfit.curve_fit_correlated(
+        fit_function, used_x, used_y, inv_corr_mat, p0=p0
+    )
+
+    dof = len(used_x) - 1 - len(fit_param_corr)
+    p_value = 1 - scipy.stats.chi2.cdf(chi_sq, dof)
+
+    return fit_param_corr[0], p_value
