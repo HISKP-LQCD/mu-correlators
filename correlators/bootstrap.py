@@ -35,7 +35,7 @@ def average_and_std_arrays(arrays):
     return val, err
 
 
-def bootstrap_pre_transform(transform, sets, sample_count=250, seed=None):
+def bootstrap_and_transform(transform, sets, sample_count=250, seed=None):
     '''
     Bootstraps the sets and transforms them.
 
@@ -56,6 +56,27 @@ def bootstrap_pre_transform(transform, sets, sample_count=250, seed=None):
     val, err = average_and_std_arrays(results)
 
     return val, err
+
+
+def generate_reduced_samples(sets, sample_count, seed=None):
+    '''
+    Generates all bootstrap samples at once.
+
+    For the analysis, the correlation matrix needs to be computed from the
+    bootstrap samples. Therefore, all the bootstrap samples are needed at the
+    same time and :py:`bootstrap_and_transform` cannot be used here.
+
+    :returns: List of averaged bootstrap samples
+    :rtype: list(sets)
+    '''
+    random.seed(seed)
+
+    results = [
+        average_combined_array(generate_sample(sets))
+        for sample_if in xrange(sample_count)
+    ]
+
+    return results
 
 
 def generate_sample(elements):
