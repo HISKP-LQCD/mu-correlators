@@ -22,7 +22,7 @@ def handle_path(path):
     '''
     Performs the analysis of every folder below the given path.
     '''
-    all_results = pd.DataFrame()
+    all_series = []
     for root, dirs, files in os.walk(path):
         # Skip all folders which contain the string `liuming` since they have a
         # different data format.
@@ -43,8 +43,8 @@ def handle_path(path):
 
             try:
                 abspath = os.path.abspath(root)
-                ensemble, results = correlators.analysis.handle_path(root)
-                all_results[ensemble] = results
+                results = correlators.analysis.handle_path(root)
+                all_series.append(results)
             except RuntimeError as e:
                 LOGGER.error('RuntimeError: %s', str(e))
             except ValueError as e:
@@ -53,4 +53,5 @@ def handle_path(path):
         else:
             dirs.sort()
 
+    all_results = pd.DataFrame(all_series)
     return all_results

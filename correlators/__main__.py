@@ -53,7 +53,7 @@ def main():
     if options.plot_only:
         result = pd.read_csv('results.csv')
     else:
-        result = correlators.traversal.handle_path(options.path).T
+        result = correlators.traversal.handle_path(options.path)
         pd.set_option('display.max_columns', None)
         print(result)
         result.to_csv('results.csv')
