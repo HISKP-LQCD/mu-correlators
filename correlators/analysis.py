@@ -99,13 +99,6 @@ def handle_path(path):
     p0_2 = [val[0], val[4]]
     p0_4 = [val[1], val[5], val[6]]
 
-    corr_fit_param, corr_fit_err = correlators.bootstrap.bootstrap_pre_transform(
-        mass_difference_correlated_decorator(T, L, p0_2, p0_4),
-        combined
-    )
-
-    print(corr_fit_param, corr_fit_err)
-
     series = pd.Series({
         'm_2_val': val[0],
         'm_2_err': err[0],
@@ -165,7 +158,10 @@ def handle_path(path):
     return parameters['ensemble'], series
 
 def analyze(sets, T, L):
+    # The bootstrap function gives all the sets. They have to be averaged
+    # first.
     params = correlators.bootstrap.average_combined_array(sets)
+
     # Unpack all the arguments from the list.
     (c2_val, c2_err), (c4_val, c4_err) = params
 
@@ -174,9 +170,10 @@ def analyze(sets, T, L):
 
     # Perform the fits.
     fit2 = correlators.fit.cosh_fit_decorator(T)
+    fit4 = correlators.fit.cosh_fit_offset_decorator(T)
+
     p2 = correlators.fit.fit(fit2, time, c2_val, c2_err,
                              omit_pre=13, p0=[0.222, c2_val[0]])
-    fit4 = correlators.fit.cosh_fit_offset_decorator(T)
     p4 = correlators.fit.fit(fit4, time, c4_val,
                              c4_err, omit_pre=13, p0=[0.45, c2_val[0], 0])
 
