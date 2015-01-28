@@ -93,7 +93,10 @@ def handle_path(path):
     orig_correlators = zip(two_points, four_points)
     (mean_2_val, mean_2_err), (mean_4_val, mean_4_err) = \
             correlators.bootstrap.average_combined_array(orig_correlators)
+
     sample_count = 3 * len(orig_correlators)
+    sample_count = 100
+
     boot_correlators = correlators.bootstrap.generate_reduced_samples(
         orig_correlators, sample_count,
     )
@@ -116,7 +119,7 @@ def handle_path(path):
     # Generate a single time, they are all the same.
     time = np.array(range(len(correlators_2_val[0])))
 
-    mean_results = analyze_2_4(
+    mean_result = analyze_2_4(
         time, mean_2_val, mean_2_err, inv_corr_mat_2,
         correlators.fit.cosh_fit_decorator, [0.222, mean_2_val[0]],
         mean_4_val, mean_4_err, inv_corr_mat_4,
@@ -146,9 +149,22 @@ def handle_path(path):
 
 
     print(boot_results)
-    print(mean_results)
+    print(mean_result)
+
+    boot_result = {
+        key: np.std(np.array(dist))
+        for key, dist in boot_results.iteritems()
+    }
 
     series = pd.Series({
+        'a_0_val': mean_result['a_0'],
+        'a_0_err': boot_result['a_0'],
+        'm_2_val': mean_result['m_2'],
+        'm_2_err': boot_result['m_2'],
+        'm_4_val': mean_result['m_4'],
+        'm_4_err': boot_result['m_4'],
+        'a_0*m_2_val': mean_result['a_0*m_2'],
+        'a_0*m_2_err': boot_result['a_0*m_2'],
         'm_pi/f_pi_val': m_pi_f_pi_val,
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
