@@ -131,8 +131,6 @@ def handle_path(path):
 
         a_0 = correlators.scatlen.compute_a0(m_2, m_4, L)
 
-        print(m_2, m_4)
-
     series = pd.Series({
         'm_pi/f_pi_val': m_pi_f_pi_val,
         'm_pi/f_pi_err': m_pi_f_pi_err,
