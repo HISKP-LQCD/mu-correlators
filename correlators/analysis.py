@@ -128,8 +128,7 @@ def handle_path(path):
         T, L, omit_pre,
     )
 
-    boot_results = {}
-
+    boot_results = pd.DataFrame()
 
     p_bar = progressbar.ProgressBar()
     for sample_id in p_bar(range(sample_count)):
@@ -142,18 +141,15 @@ def handle_path(path):
             [0.222, correlators_2_val[sample_id][0], 0], T, L, omit_pre
         )
 
-        # Join those results with the existing ones.
-        # XXX This might be doable with Pandas easier.
-        for key, value in boot_result.iteritems():
-            if key in boot_results:
-                boot_results[key].append(value)
-            else:
-                boot_results[key] = []
+        boot_series = pd.Series(boot_result)
+        boot_results[sample_id] = boot_series
+
+    print(boot_results)
 
 
     boot_result = {
         key: np.std(np.array(dist))
-        for key, dist in boot_results.iteritems()
+        for key, dist in boot_results.T.iteritems()
     }
 
     series = pd.Series({
@@ -173,9 +169,9 @@ def handle_path(path):
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
         'T': parameters['T'],
-    })
+    }, name=parameters['ensemble'])
 
-    return parameters['ensemble'], series
+    return series
 
 def analyze(sets, T, L):
     # Unpack all the arguments from the list.
