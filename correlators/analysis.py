@@ -88,9 +88,6 @@ def handle_path(path):
     # configurations are grouped together.
     combined = zip(two_points, four_points)
 
-    #fig = pl.figure()
-    #ax = fig.add_subplot(1, 1, 1)
-
     val, err = correlators.bootstrap.bootstrap_pre_transform(
         mass_difference_decorator(T, L),
         combined,
@@ -105,8 +102,6 @@ def handle_path(path):
     )
 
     print(corr_fit_param, corr_fit_err)
-
-    #fig.savefig('newton_' + name + '.pdf')
 
     series = pd.Series({
         'm_2_val': val[0],
