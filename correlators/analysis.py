@@ -150,11 +150,6 @@ def handle_path(path):
         'T': parameters['T'],
     })
 
-    correlators.plot.plot_correlator(two_points, name+'_c2', T)
-    correlators.plot.plot_correlator(four_points, name+'_c4', T, offset=True)
-    correlators.plot.plot_effective_mass(two_points, name+'_c2')
-    correlators.plot.plot_effective_mass(four_points, name+'_c4')
-
     return parameters['ensemble'], series
 
 def analyze(sets, T, L):
