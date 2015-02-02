@@ -144,9 +144,6 @@ def handle_path(path):
         boot_series = pd.Series(boot_result)
         boot_results[sample_id] = boot_series
 
-    print(boot_results)
-
-
     boot_result = {
         key: np.std(np.array(dist))
         for key, dist in boot_results.T.iteritems()
