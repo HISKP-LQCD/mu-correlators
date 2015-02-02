@@ -24,13 +24,9 @@ def handle_path(path):
     '''
     all_series = []
     for root, dirs, files in os.walk(path):
-        # Skip all folders which contain the string `liuming` since they have a
+        # Skip all folders which contain certains strings since they have a
         # different data format.
-        if 'liuming' in root:
-            del dirs[:]
-            continue
-
-        if 'Kpi' in root:
+        if any([flee in root for flee in ['liuming', 'Kpi']]):
             del dirs[:]
             continue
 
