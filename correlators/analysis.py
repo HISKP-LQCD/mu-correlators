@@ -34,38 +34,56 @@ LOGGER = logging.getLogger(__name__)
 
 ENSENBLE_DATA = {
     'A30.32': {
+        'a0*m_pi_paper_val': -0.129951,
+        'a0*m_pi_paper_err': 0.002123,
         'm_pi/f_pi_val' : 1.86,
         'm_pi/f_pi_err' : 0.0,
     },
     'A40.32': {
+        'a0*m_pi_paper_val': -0.155561,
+        'a0*m_pi_paper_err': 0.002677,
         'm_pi/f_pi_val' : 2.06,
         'm_pi/f_pi_err' : 0.01,
     },
     'A40.24': {
+        'a0*m_pi_paper_val': -0.167954,
+        'a0*m_pi_paper_err': 0.005012,
         'm_pi/f_pi_val' : 2.03,
         'm_pi/f_pi_err' : 0.03,
     },
     'A40.20': {
+        'a0*m_pi_paper_val': -0.202408,
+        'a0*m_pi_paper_err': 0.004399,
         'm_pi/f_pi_val' : 2.11,
         'm_pi/f_pi_err' : 0.05,
     },
     'D45.32': {
+        'a0*m_pi_paper_val': -0.261902,
+        'a0*m_pi_paper_err': 0.005812,
         'm_pi/f_pi_val' : 2.49,
         'm_pi/f_pi_err' : 0.0
     },
     'B55.32': {
+        'a0*m_pi_paper_val': -0.218145,
+        'a0*m_pi_paper_err': 0.003091,
         'm_pi/f_pi_val' : 2.34,
         'm_pi/f_pi_err' : 0.0,
     },
     'A60.24': {
+        'a0*m_pi_paper_val': -0.216280,
+        'a0*m_pi_paper_err': 0.003840,
         'm_pi/f_pi_val' : 2.32,
         'm_pi/f_pi_err' : 0.0,
     },
     'A80.24': {
+        'a0*m_pi_paper_val': -0.262226,
+        'a0*m_pi_paper_err': 0.003341,
         'm_pi/f_pi_val' : 2.55,
         'm_pi/f_pi_err' : 0.0,
     },
     'A100.24': {
+        'a0*m_pi_paper_val': -0.292774,
+        'a0*m_pi_paper_err': 0.003357,
         'm_pi/f_pi_val' : 2.77,
         'm_pi/f_pi_err' : 0.0,
     },
@@ -84,6 +102,9 @@ def handle_path(path):
 
     m_pi_f_pi_val = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_val']
     m_pi_f_pi_err = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_err']
+
+    a0_mpi_paper_val = ENSENBLE_DATA[parameters['ensemble']]['a0*m_pi_paper_val']
+    a0_mpi_paper_err = ENSENBLE_DATA[parameters['ensemble']]['a0*m_pi_paper_err']
 
     T = int(parameters['T'])
     L = int(parameters['L'])
@@ -169,6 +190,8 @@ def handle_path(path):
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
         'T': parameters['T'],
+        'a0*m_pi_paper_val': a0_mpi_paper_val,
+        'a0*m_pi_paper_err': a0_mpi_paper_err,
     }, name=parameters['ensemble'])
 
     return series
