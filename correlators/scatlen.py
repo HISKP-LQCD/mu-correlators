@@ -25,7 +25,6 @@ def a0_intercept_generator(m, w, l):
 
 def compute_a0(m, w, l):
     a0_intercept = a0_intercept_generator(m, w, l)
-    a0 = op.newton(a0_intercept, 0)
 
     try:
         # Try to find the root in a large interval with Brent.
