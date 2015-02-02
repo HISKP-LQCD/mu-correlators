@@ -26,7 +26,7 @@ def compute_a0(m, w, l):
     a0_intercept = a0_intercept_generator(m, w, l)
 
     try:
-        a0 = op.newton(a0_intercept, 0)
+        a0 = op.brentq(a0_intercept, -80, 80)
     except RuntimeError as e:
         x = np.linspace(-50, 50, 100)
         y = a0_intercept(x)
