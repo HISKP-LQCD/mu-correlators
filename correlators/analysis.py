@@ -99,6 +99,9 @@ def handle_path(path):
     m_pi_f_pi_val = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_val']
     m_pi_f_pi_err = ENSENBLE_DATA[parameters['ensemble']]['m_pi/f_pi_err']
 
+    a0_mpi_paper_val = ENSENBLE_DATA[parameters['ensemble']]['a0*m_pi_paper_val']
+    a0_mpi_paper_err = ENSENBLE_DATA[parameters['ensemble']]['a0*m_pi_paper_err']
+
     T = int(parameters['T'])
     L = int(parameters['L'])
 
@@ -175,6 +178,8 @@ def handle_path(path):
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
         'T': parameters['T'],
+        'a0*m_pi_paper_val': a0_mpi_paper_val,
+        'a0*m_pi_paper_err': a0_mpi_paper_err,
     })
 
     correlators.plot.plot_correlator(two_points, name+'_c2', T)

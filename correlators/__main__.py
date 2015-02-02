@@ -84,6 +84,11 @@ def plot_results(result):
             xerr=data['m_pi/f_pi_err'], yerr=data['corr__a0*m2_err'],
             linestyle='none', marker='*', color=color,
         )
+        ax.errorbar(
+            data['m_pi/f_pi_val']+0.01, data['a0*m_pi_paper_val'],
+            xerr=data['m_pi/f_pi_err'], yerr=data['a0*m_pi_paper_err'],
+            linestyle='none', marker='d', color=color,
+        )
 
     lo_x = np.linspace(
         np.min(result['m_pi/f_pi_val']),
