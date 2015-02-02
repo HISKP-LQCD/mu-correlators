@@ -202,7 +202,7 @@ def perform_fits(time, corr_val, corr_err, inv_corr_mat, fit_factory, p0, T, omi
     # Then perform a correlated fit using the previous result as the input.
     # This way it should be more stable.
     fit_param_corr, chi_sq = correlators.corrfit.curve_fit_correlated(
-        fit_function, used_x, used_y, inv_corr_mat, p0=p0
+        fit_function, used_x, used_y, inv_corr_mat, p0=fit_param,
     )
 
     dof = len(used_x) - 1 - len(fit_param_corr)
