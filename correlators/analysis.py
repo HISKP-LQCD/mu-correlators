@@ -91,7 +91,7 @@ ENSENBLE_DATA = {
 'List of ensembles used in arXiv:1412.0408v1'
 
 
-def handle_path(path):
+def handle_path(path, options):
     '''
     Performs the analysis of all the files in the given folder.
     '''

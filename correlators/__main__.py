@@ -53,7 +53,7 @@ def main():
     if options.plot_only:
         result = pd.read_csv('results.csv')
     else:
-        result = correlators.traversal.handle_path(options.path)
+        result = correlators.traversal.handle_path(options)
         pd.set_option('display.max_columns', None)
         print(result)
         result.to_csv('results.csv')
@@ -114,6 +114,7 @@ def _parse_args():
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('path')
     parser.add_argument('--plot-only', action='store_true')
+    parser.add_argument('--corr-plot', action='store_true', help='Perform a correlated plot')
     options = parser.parse_args()
 
     return options

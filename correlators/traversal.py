@@ -18,12 +18,12 @@ import correlators.analysis
 LOGGER = logging.getLogger(__name__)
 
 
-def handle_path(path):
+def handle_path(options):
     '''
     Performs the analysis of every folder below the given path.
     '''
     all_series = []
-    for root, dirs, files in os.walk(path):
+    for root, dirs, files in os.walk(options.path):
         # Skip all folders which contain certains strings since they have a
         # different data format.
         if any([flee in root for flee in ['liuming', 'Kpi']]):
@@ -38,7 +38,7 @@ def handle_path(path):
                 continue
 
             abspath = os.path.abspath(root)
-            results = correlators.analysis.handle_path(root)
+            results = correlators.analysis.handle_path(root, options)
             all_series.append(results)
 
         else:
