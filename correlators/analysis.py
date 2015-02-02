@@ -42,7 +42,7 @@ ENSENBLE_DATA = {
         'm_pi/f_pi_err' : 0.01,
     },
     'A40.24': {
-        'a0*m_pi_paper_val': -16.7954,
+        'a0*m_pi_paper_val': -0.167954,
         'a0*m_pi_paper_err': 0.005012,
         'm_pi/f_pi_val' : 2.03,
         'm_pi/f_pi_err' : 0.03,
