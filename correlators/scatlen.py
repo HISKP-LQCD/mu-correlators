@@ -28,7 +28,11 @@ def compute_a0(m, w, l):
     a0 = op.newton(a0_intercept, 0)
 
     try:
-        a0 = op.brentq(a0_intercept, -120, 0)
+        # Try to find the root in a large interval with Brent.
+        a0_brentq = op.brentq(a0_intercept, -120, 0)
+
+        # Then refine it with the Newton method.
+        a0 = op.newton(a0_intercept, a0_brentq)
     except RuntimeError as e:
         debug_intercept(a0_intercept)
         raise
