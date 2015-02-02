@@ -15,6 +15,7 @@ from __future__ import division, absolute_import, print_function, \
 import os
 import os.path
 import re
+import logging
 
 import numpy as np
 
@@ -35,6 +36,8 @@ CONFIGURATION_PATTERN = re.compile(r'''
                                    kappa(?P<kappa>\d+)
                                    .*)$
                                    ''', re.X)
+
+LOGGER = logging.getLogger(__name__)
 
 
 def folder_loader(path):
@@ -75,9 +78,8 @@ def folder_loader(path):
             if number in four_points:
                 four_points[number].append(data)
             else:
-                raise RuntimeError('Number {} is unexpected in `{}`.'.format(
-                    number, filename
-                ))
+                LOGGER.warning('Number %s is unexpected in `%s`.', number,
+                               filename)
             continue
 
         raise RuntimeError('`{}` has unforseen format.'.format(filename))
