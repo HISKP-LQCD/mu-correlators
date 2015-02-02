@@ -38,8 +38,8 @@ def handle_path(path):
                 continue
 
             abspath = os.path.abspath(root)
-            ensemble, results = correlators.analysis.handle_path(root)
-            all_results[ensemble] = results
+            results = correlators.analysis.handle_path(root)
+            all_series.append(results)
 
         else:
             dirs.sort()
