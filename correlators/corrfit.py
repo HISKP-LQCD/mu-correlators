@@ -141,7 +141,7 @@ def curve_fit_correlated(function, xdata, ydata, inv_cm, p0):
 
     x, cov_x = op.leastsq(leastsq_func, p0)
 
-    chi_sq = leastsq_func(x)**2
+    chi_sq = np.sum(leastsq_func(x)**2)
 
     return x, chi_sq
 
