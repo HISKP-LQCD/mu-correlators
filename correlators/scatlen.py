@@ -6,9 +6,13 @@
 
 from __future__ import division, absolute_import, print_function, unicode_literals
 
+import logging
+
 import numpy as np
 import matplotlib.pyplot as pl
 import scipy.optimize as op
+
+LOGGER = logging.getLogger(__name__)
 
 
 def a0_intercept_generator(m, w, l):
@@ -28,7 +32,27 @@ def compute_a0(m, w, l):
 
     try:
         # Try to find the root in a large interval with Brent.
-        a0_brentq = op.brentq(a0_intercept, -120, 0)
+        upper = 50
+        lower = -120
+
+        upper_iter = 0
+        while a0_intercept(upper) > 0:
+            upper *= 1.5
+            upper_iter += 1
+            if upper_iter > 1000:
+                raise RuntimeError('Too many interations on upper bound')
+
+        lower_iter = 0
+        while a0_intercept(lower) < 0:
+            lower *= 1.5
+            lower_iter += 1
+            if lower_iter > 1000:
+                raise RuntimeError('Too many interations on lower bound')
+
+        if upper_iter > 0 or lower_iter > 0:
+            LOGGER.warning('Bound were adjusted to [%f, %f]', lower, upper)
+
+        a0_brentq = op.brentq(a0_intercept, lower, upper)
 
         # Then refine it with the Newton method.
         a0 = op.newton(a0_intercept, a0_brentq)
