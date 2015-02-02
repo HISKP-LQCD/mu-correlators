@@ -139,14 +139,11 @@ def generate_leastsq_func(average, inv_correlation_matrix, fit_estimator, t):
 def curve_fit_correlated(function, xdata, ydata, inv_cm, p0):
     leastsq_func = generate_leastsq_func(ydata, inv_cm, function, xdata)
 
-    res = op.leastsq(leastsq_func, p0)
+    x, cov_x, infodict, mesg, ier = op.leastsq(leastsq_func, p0)
 
-    if not res.success:
-        print(res.message)
+    chi_sq = leastsq_func(x)**2
 
-    chi_sq = chi_sq_minimizer(res.x)
-
-    return res.x, chi_sq
+    return x, chi_sq
 
 
 def fit(func, x, y, omit_pre=0, omit_post=0, p0=None):
