@@ -22,13 +22,23 @@ def a0_intercept_generator(m, w, l):
 
     return a0_intercept
 
-def compute_a0(m, w, l, fig=None, x=np.linspace(-5, 5, 100)):
+def compute_a0(m, w, l):
     a0_intercept = a0_intercept_generator(m, w, l)
-    a0 = op.newton(a0_intercept, 0)
 
-    if fig is not None:
+    try:
+        a0 = op.newton(a0_intercept, 0)
+    except RuntimeError as e:
+        x = np.linspace(-50, 50, 100)
         y = a0_intercept(x)
-        fig.plot(x, y, color='blue', alpha=0.5)
-        fig.plot([a0], [a0_intercept(a0)], linestyle='none', marker='.', color='black')
+
+        fig = pl.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax.plot(x, y, marker='+')
+        ax.grid(True)
+        fig.show()
+
+        raw_input()
+
+        raise
 
     return a0
