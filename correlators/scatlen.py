@@ -22,13 +22,31 @@ def a0_intercept_generator(m, w, l):
 
     return a0_intercept
 
-def compute_a0(m, w, l, fig=None, x=np.linspace(-5, 5, 100)):
+
+def compute_a0(m, w, l):
     a0_intercept = a0_intercept_generator(m, w, l)
     a0 = op.newton(a0_intercept, 0)
 
-    if fig is not None:
-        y = a0_intercept(x)
-        fig.plot(x, y, color='blue', alpha=0.5)
-        fig.plot([a0], [a0_intercept(a0)], linestyle='none', marker='.', color='black')
+    try:
+        a0 = op.brentq(a0_intercept, -120, 0)
+    except RuntimeError as e:
+        debug_intercept(a0_intercept)
+        raise
+    except ValueError as e:
+        debug_intercept(a0_intercept)
+        raise
 
     return a0
+
+
+def debug_intercept(function):
+    x = np.linspace(-200, 80, 100)
+    y = function(x)
+
+    fig = pl.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(x, y, marker='+')
+    ax.grid(True)
+    fig.show()
+
+    raw_input()
