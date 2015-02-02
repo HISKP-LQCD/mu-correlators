@@ -122,11 +122,13 @@ def correlated_chi_square(average, fit_estimate, inv_correlation_matrix):
     :rtype: float
     '''
     vec = np.asmatrix(average - fit_estimate)
-    chi_sq = vec * inv_correlation_matrix * vec.T
-    return chi_sq[0, 0]
+    L = np.linalg.cholesky(inv_correlation_matrix)
+    chi_sq = np.asmatrix(L) * vec.T
+    flat = np.asarray(chi_sq).flatten()
+    return flat
 
 
-def generate_chi_sq_minimizer(average, inv_correlation_matrix, fit_estimator, t):
+def generate_leastsq_func(average, inv_correlation_matrix, fit_estimator, t):
     def chi_sq_minimizer(parameters):
         fit_estimate = fit_estimator(t, *parameters)
         return correlated_chi_square(average, fit_estimate,
@@ -135,9 +137,9 @@ def generate_chi_sq_minimizer(average, inv_correlation_matrix, fit_estimator, t)
 
 
 def curve_fit_correlated(function, xdata, ydata, inv_cm, p0):
-    chi_sq_minimizer = generate_chi_sq_minimizer(ydata, inv_cm, function, xdata)
+    leastsq_func = generate_leastsq_func(ydata, inv_cm, function, xdata)
 
-    res = op.minimize(chi_sq_minimizer, p0, method='Powell')
+    res = op.leastsq(leastsq_func, p0)
 
     if not res.success:
         print(res.message)
