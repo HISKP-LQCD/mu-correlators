@@ -81,7 +81,7 @@ def plot_results(result):
             linestyle='none', marker='+', label=data[0], color=color,
         )
         ax.errorbar(
-            data['m_pi/f_pi_val']+0.05, data['a0*m_pi_paper_val'],
+            data['m_pi/f_pi_val']+0.005, data['a0*m_pi_paper_val'],
             xerr=data['m_pi/f_pi_err'], yerr=data['a0*m_pi_paper_err'],
             linestyle='none', marker='d', color=color,
         )
@@ -92,17 +92,18 @@ def plot_results(result):
         1000
     )
     lo_y = leading_order(lo_x)
-    ax.plot(lo_x, lo_y)
+    ax.plot(lo_x, lo_y, color='black')
 
     ax.margins(0.05, 0.05)
     ax.set_xlabel(r'$m_\pi / f_\pi$')
     ax.set_ylabel(r'$m_\pi a_0$')
+    ax.set_ylim([-0.35, -0.05])
     ax.grid(True)
 
     ax.legend(loc='best', prop={'size':9})
 
-    fig.show()
-    raw_input()
+    #fig.show()
+    #raw_input()
 
     fig.tight_layout()
     fig.savefig('result.pdf')
