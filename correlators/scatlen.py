@@ -22,23 +22,34 @@ def a0_intercept_generator(m, w, l):
 
     return a0_intercept
 
+
 def compute_a0(m, w, l):
     a0_intercept = a0_intercept_generator(m, w, l)
 
     try:
-        a0 = op.brentq(a0_intercept, -80, 80)
+        # Try to find the root in a large interval with Brent.
+        a0_brentq = op.brentq(a0_intercept, -120, 0)
+
+        # Then refine it with the Newton method.
+        a0 = op.newton(a0_intercept, a0_brentq)
     except RuntimeError as e:
-        x = np.linspace(-50, 50, 100)
-        y = a0_intercept(x)
-
-        fig = pl.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        ax.plot(x, y, marker='+')
-        ax.grid(True)
-        fig.show()
-
-        raw_input()
-
+        debug_intercept(a0_intercept)
+        raise
+    except ValueError as e:
+        debug_intercept(a0_intercept)
         raise
 
     return a0
+
+
+def debug_intercept(function):
+    x = np.linspace(-200, 80, 100)
+    y = function(x)
+
+    fig = pl.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(x, y, marker='+')
+    ax.grid(True)
+    fig.show()
+
+    raw_input()
