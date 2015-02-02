@@ -146,7 +146,7 @@ def handle_path(path, options):
         correlators.fit.cosh_fit_decorator, [0.222, mean_2_val[0]],
         mean_4_val, mean_4_err, inv_corr_mat_4,
         correlators.fit.cosh_fit_offset_decorator, [0.222, mean_4_val[0], 0],
-        T, L, omit_pre,
+        T, L, omit_pre, options,
     )
 
     boot_results = pd.DataFrame()
@@ -159,7 +159,8 @@ def handle_path(path, options):
             [0.222, correlators_2_val[sample_id][0]],
             correlators_4_val[sample_id], correlators_4_err[sample_id],
             inv_corr_mat_4, correlators.fit.cosh_fit_offset_decorator,
-            [0.222, correlators_2_val[sample_id][0], 0], T, L, omit_pre
+            [0.222, correlators_2_val[sample_id][0], 0], T, L, omit_pre,
+            options,
         )
 
         boot_series = pd.Series(boot_result)
@@ -208,7 +209,8 @@ def unwrap_correlator_errors(boot_correlators, index):
     ]
 
 
-def perform_fits(time, corr_val, corr_err, inv_corr_mat, fit_factory, p0, T, omit_pre):
+def perform_fits(time, corr_val, corr_err, inv_corr_mat, fit_factory, p0, T,
+                 omit_pre, options):
     # Generate a fit function from the factory.
     fit_function = fit_factory(T)
 
@@ -222,29 +224,32 @@ def perform_fits(time, corr_val, corr_err, inv_corr_mat, fit_factory, p0, T, omi
     fit_param, pconv = op.curve_fit(fit_function, used_x, used_y, p0=p0,
                                     sigma=used_yerr)
 
-    # Then perform a correlated fit using the previous result as the input.
-    # This way it should be more stable.
-    fit_param_corr, chi_sq = correlators.corrfit.curve_fit_correlated(
-        fit_function, used_x, used_y, inv_corr_mat, p0=fit_param,
-    )
+    if options.corr_fit:
+        # Then perform a correlated fit using the previous result as the input.
+        # This way it should be more stable.
+        fit_param_corr, chi_sq = correlators.corrfit.curve_fit_correlated(
+            fit_function, used_x, used_y, inv_corr_mat, p0=fit_param,
+        )
 
-    dof = len(used_x) - 1 - len(fit_param_corr)
-    p_value = 1 - scipy.stats.chi2.cdf(chi_sq, dof)
+        dof = len(used_x) - 1 - len(fit_param_corr)
+        p_value = 1 - scipy.stats.chi2.cdf(chi_sq, dof)
 
-    return fit_param_corr[0], p_value
+        return fit_param_corr[0], p_value
+    else:
+        return fit_param[0], 0
 
 
 def analyze_2_4(time, correlator_2_val, correlator_2_err, inv_corr_mat_2,
                 fit_factory_2, p0_2, correlator_4_val, correlator_4_err,
-                inv_corr_mat_4, fit_factory_4, p0_4, T, L, omit_pre):
+                inv_corr_mat_4, fit_factory_4, p0_4, T, L, omit_pre, options):
     m_2, p_value_2 = perform_fits(
         time, correlator_2_val, correlator_2_err, inv_corr_mat_2,
-        fit_factory_2, p0_2, T, omit_pre
+        fit_factory_2, p0_2, T, omit_pre, options,
     )
 
     m_4, p_value_4 = perform_fits(
         time, correlator_4_val, correlator_4_err, inv_corr_mat_4,
-        fit_factory_4, p0_4, T, omit_pre
+        fit_factory_4, p0_4, T, omit_pre, options,
     )
 
     delta_m = m_4 - 2 * m_2

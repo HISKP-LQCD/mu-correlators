@@ -114,7 +114,7 @@ def _parse_args():
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('path')
     parser.add_argument('--plot-only', action='store_true')
-    parser.add_argument('--corr-plot', action='store_true', help='Perform a correlated plot')
+    parser.add_argument('--corr-fit', action='store_true', help='Perform a correlated fit')
     options = parser.parse_args()
 
     return options
