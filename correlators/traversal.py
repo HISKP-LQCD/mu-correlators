@@ -47,8 +47,8 @@ def handle_path(path):
                 all_series.append(results)
             except RuntimeError as e:
                 LOGGER.error('RuntimeError: %s', str(e))
-            except ValueError as e:
-                LOGGER.error('ValueError: %s', str(e))
+            #except ValueError as e:
+                #LOGGER.error('ValueError: %s', str(e))
 
         else:
             dirs.sort()
