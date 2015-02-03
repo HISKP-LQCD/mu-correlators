@@ -176,25 +176,22 @@ def handle_path(path, options):
         for key, dist in boot_results.T.iteritems()
     }
 
-    if False:
+    for field in ['a_0', 'm_2', 'm_4', 'a_0*m_2']:
         pl.clf()
-        pl.hist(boot_results.T['a_0'])
-        pl.title('Bootstrap a_0')
-        pl.show()
-
-        pl.clf()
-        pl.hist(boot_results.T['a_0*m_2'])
-        pl.title('Bootstrap a_0*m_2')
-        pl.show()
+        pl.hist(boot_results.T[field])
+        pl.title('Bootstrap distribution of {} in {}'.format(field, parameters['ensemble']))
+        pl.savefig('{}_boot-hist_{}.pdf'.format(name, field))
 
     series = pd.Series({
         'a_0:1val': mean_result['a_0'],
         'a_0:2mean': boot_mean['a_0'],
         'a_0:3err': boot_std['a_0'],
-        'm_2_val': mean_result['m_2'],
-        'm_2_err': boot_std['m_2'],
-        'm_4_val': mean_result['m_4'],
-        'm_4_err': boot_std['m_4'],
+        'm_2:1val': mean_result['m_2'],
+        'm_2:2mean': boot_mean['m_2'],
+        'm_2:3err': boot_std['m_2'],
+        'm_4:1val': mean_result['m_4'],
+        'm_4:2mean': boot_mean['m_4'],
+        'm_4:3err': boot_std['m_4'],
         'a_0*m_2:1val': mean_result['a_0*m_2'],
         'a_0*m_2:2mean': boot_mean['a_0*m_2'],
         'a_0*m_2:3err': boot_std['a_0*m_2'],
