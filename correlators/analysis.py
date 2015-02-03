@@ -166,24 +166,42 @@ def handle_path(path, options):
         boot_series = pd.Series(boot_result)
         boot_results[sample_id] = boot_series
 
-    boot_result = {
+    boot_std = {
         key: np.std(np.array(dist))
         for key, dist in boot_results.T.iteritems()
     }
 
+    boot_mean = {
+        key: np.mean(np.array(dist))
+        for key, dist in boot_results.T.iteritems()
+    }
+
+    if False:
+        pl.clf()
+        pl.hist(boot_results.T['a_0'])
+        pl.title('Bootstrap a_0')
+        pl.show()
+
+        pl.clf()
+        pl.hist(boot_results.T['a_0*m_2'])
+        pl.title('Bootstrap a_0*m_2')
+        pl.show()
+
     series = pd.Series({
-        'a_0_val': mean_result['a_0'],
-        'a_0_err': boot_result['a_0'],
+        'a_0:1val': mean_result['a_0'],
+        'a_0:2mean': boot_mean['a_0'],
+        'a_0:3err': boot_std['a_0'],
         'm_2_val': mean_result['m_2'],
-        'm_2_err': boot_result['m_2'],
+        'm_2_err': boot_std['m_2'],
         'm_4_val': mean_result['m_4'],
-        'm_4_err': boot_result['m_4'],
-        'a_0*m_2_val': mean_result['a_0*m_2'],
-        'a_0*m_2_err': boot_result['a_0*m_2'],
+        'm_4_err': boot_std['m_4'],
+        'a_0*m_2:1val': mean_result['a_0*m_2'],
+        'a_0*m_2:2mean': boot_mean['a_0*m_2'],
+        'a_0*m_2:3err': boot_std['a_0*m_2'],
         'p_value_2_val': mean_result['p_value_2'],
-        'p_value_2_err': boot_result['p_value_2'],
+        'p_value_2_err': boot_std['p_value_2'],
         'p_value_4_val': mean_result['p_value_4'],
-        'p_value_4_err': boot_result['p_value_4'],
+        'p_value_4_err': boot_std['p_value_4'],
         'm_pi/f_pi_val': m_pi_f_pi_val,
         'm_pi/f_pi_err': m_pi_f_pi_err,
         'L': parameters['L'],
