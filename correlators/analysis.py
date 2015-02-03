@@ -159,7 +159,7 @@ def handle_path(path, options):
             [0.222, correlators_2_val[sample_id][0]],
             correlators_4_val[sample_id], correlators_4_err[sample_id],
             inv_corr_mat_4, correlators.fit.cosh_fit_offset_decorator,
-            [0.222, correlators_2_val[sample_id][0], 0], T, L, omit_pre,
+            [0.222, correlators_4_val[sample_id][0], 0], T, L, omit_pre,
             options,
         )
 
